@@ -1,28 +1,40 @@
 import React from 'react';
 import './App.css';
-import Login from './components/login'
 import { Container } from 'semantic-ui-react';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
 } from "react-router-dom";
+import { Provider } from 'react-redux'
+
+import Login from './components/login'
+import Auth from './components/auth'
+import Projects from './components/projects'
+
+import store from './store'
+
 
 function App() {
   return (
-    <Router>
-      <Switch>
+    <Provider store = {store}>
+      <Router>
+        <Switch>
 
-        <Route exact path = '/'>
-          <Container style = {{margin:20}}>
-            <Login></Login>
-          </Container>
-        </Route>
-        
-      </Switch>
+          <Route exact path = '/'>
+            <Container style = {{margin:20}}>
+              <Login></Login>
+            </Container>
+          </Route>
 
-    </Router>
+          <Route path = '/auth' component = {Auth}/>
+
+          <Route path = '/projects' component = {Projects}/>
+
+        </Switch>
+      </Router>
+    </Provider>
   );
 }
 
-export default App;
+export default App

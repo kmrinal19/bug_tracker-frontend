@@ -1,6 +1,6 @@
 import React from 'react'
 import { Header, Image, Container, Label } from 'semantic-ui-react'
-import { CLIENT_ID, REDIRECT_URL } from '../Const'
+import { CLIENT_ID, REDIRECT_URL, GET_ACCESS_CODE_URL } from '../Const'
 
 const Login = () => {
     return (
@@ -34,7 +34,7 @@ const Login = () => {
                 <Label as = 'a'
                     basic
                     size = 'large'
-                    href = 'http://localhost:3000/home/'
+                    href = {GET_ACCESS_CODE_URL+'?client_id='+CLIENT_ID+'&redirect_url='+REDIRECT_URL}
                     >
                     <Image spaced = 'right' src = {require('../images/omniport.ico')}/>
                     Login with omni:port
