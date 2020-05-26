@@ -2,7 +2,7 @@ import Cookies from 'js-cookie'
 import axios from 'axios'
 import store from './store'
 
-import { WHOAMI_URL, AUTHENTICATION_FAILED } from './Const'
+import { WHOAMI_URL, LOGIN_HOME_URL } from './Const'
 import { setUser } from './actions/userActions'
 
 const authenticate = () => {
@@ -20,9 +20,13 @@ const authenticate = () => {
                 return true
             }
         })
+        .catch(err =>{
+            Cookies.remove('token')
+            window.location.href=LOGIN_HOME_URL
+        })
     }
     else{
-        return (AUTHENTICATION_FAILED)
+        window.location.href=LOGIN_HOME_URL
     }
 }
 
