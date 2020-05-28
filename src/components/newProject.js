@@ -33,7 +33,7 @@ class NewProject extends Component {
     handleSubmit = (event) => {
         
         console.log(this.state)
-        event.preventDefault();
+        event.preventDefault()
 
         let formData = new FormData()
 

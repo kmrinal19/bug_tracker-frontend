@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import axios from 'axios'
-import { Header,Loader, Divider, Comment} from 'semantic-ui-react'
+import { Header,Loader, Divider, Comment, Form} from 'semantic-ui-react'
 import { connect } from 'react-redux'
 
 import authenticate from '../authenticate'
@@ -13,14 +13,16 @@ class IssueDetails extends Component {
         super(props)
         this.state={
             issueDetail : {issueComments:[]},
-            isLoading: true
+            comments : [],
+            isLoading: true,
+            comment:'',
+            ws : null
         }
     }
 
     componentDidMount(){
 
         authenticate()
-
         const { id } = this.props.match.params
         let get_issue_details_url = ISSUE_URL+id
 
@@ -28,6 +30,20 @@ class IssueDetails extends Component {
         .then(response => {
             if(response.status === 200 && response.data.id){
                 this.setState({issueDetail:response.data, isLoading:false})
+                this.setState({comments:this.state.issueDetail.issueComments})
+                
+                const ws = new WebSocket('ws://localhost:8000/ws/chat/'+id+'/'+this.props.user.token)
+                ws.onopen = () =>{
+                    console.log('connected')
+                }
+                ws.onclose = () =>{
+                    console.log('disconnected')
+                }
+                ws.onmessage = evt =>{
+                    const message = JSON.parse(evt.data)
+                    this.setState({comments: [...this.state.comments,message]})
+                }
+                this.setState({ws:ws})
             }
             else{
                 this.setState({loadError:true})
@@ -41,7 +57,23 @@ class IssueDetails extends Component {
         })
     }
 
+
+
+    handleChange = (event) => {
+        this.setState({[event.target.name] : event.target.value})
+    }
+
+    handleSubmit = (event) => {
+        event.preventDefault()
+        let data = {
+            message:this.state.comment
+            }
+        this.state.ws.send(JSON.stringify(data))
+        this.setState({comment:''})
+    }
+
     render() {
+
 
         const head = (
             <Fragment>
@@ -60,7 +92,7 @@ class IssueDetails extends Component {
         )
 
         const comments = (
-            this.state.issueDetail.issueComments.map(comment => (
+            this.state.comments.map(comment => (
                 <Comment key = {comment.id}>
                     <Comment.Avatar src = {require('../images/user.svg')}/>
                     <Comment.Content>
@@ -82,15 +114,23 @@ class IssueDetails extends Component {
 
         return(
             <div>
-                {loading?<Loader active size='large'>Loading</Loader>:''}
-                {(loadError)?'Someting went wrong':(
-                    <Fragment>
-                        {head}
-                        <Comment.Group>
-                            {comments}
-                        </Comment.Group>
-                    </Fragment>
-                )}
+                {loading?<Loader active size='large'>Loading</Loader>:
+                    loadError?'Someting went wrong':
+                        <Fragment>
+                            {head}
+                            <Comment.Group>
+                                {comments}
+                            </Comment.Group>
+                            <Form onSubmit = {this.handleSubmit} encType='multipart/form-data'>
+                                <Form.TextArea label='Add a comment' 
+                                    placeholder='Comment..' 
+                                    name='comment' 
+                                    onChange={this.handleChange} 
+                                    value = {this.state.comment}/>
+                                <Form.Button>Add comment</Form.Button>
+                            </Form>
+                        </Fragment>
+                }
             </div>
         )
     }
