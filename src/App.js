@@ -13,6 +13,7 @@ import Auth from './components/auth'
 import Projects from './components/projects'
 import ProjectDetail from './components/projectDetail'
 import IssueDetails from './components/issueDetails'
+import NewProject from './components/newProject'
 
 import store from './store'
 
@@ -36,6 +37,8 @@ function App() {
           <Route exact path = '/projects/:id' component = {ProjectDetail}/>
 
           <Route exact path = '/issue/:id' component = {IssueDetails}/>
+
+          <Route exact path = '/newproject' component = {NewProject}/>
 
         </Switch>
       </Router>
