@@ -4,6 +4,7 @@ import authenticate from '../authenticate'
 import { Header, Form } from 'semantic-ui-react'
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { connect } from 'react-redux'
 
 class NewProject extends Component {
     constructor(props){
@@ -105,4 +106,8 @@ class NewProject extends Component {
     }
 }
 
-export default NewProject
+const mapStateToProps = (state) => ({
+    user : state.user.item
+})
+
+export default connect(mapStateToProps)(NewProject)

@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { Redirect, Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import queryString from 'query-string'
-import Cookies from 'js-cookie'
 
 import { loginUser } from '../actions/userActions'
 
@@ -12,7 +11,7 @@ class Auth extends Component{
         this.props.loginUser(values.code)
     }
     render(){
-        Cookies.set('token', this.props.user.token )
+        localStorage.setItem('token', this.props.user.token )
         let auth_data = this.props.user.err ? <Redirect to = '/'/> : this.props.user.token 
         return (
             <div>

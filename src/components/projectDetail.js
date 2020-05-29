@@ -71,26 +71,26 @@ class ProjectDetail extends Component {
 
         return(
             <div>
-                {loading?<Loader active size='large'>Loading</Loader>:''}
-                {(loadError)?'Someting went wrong':(
-                                    <Fragment>
-                                    {head}
-                                    <Table striped>
-                                        <Table.Header>
-                                            <Table.Row>
-                                                <Table.HeaderCell>Issue</Table.HeaderCell>
-                                                <Table.HeaderCell>Created by</Table.HeaderCell>
-                                                <Table.HeaderCell>Created on</Table.HeaderCell>
-                                                <Table.HeaderCell>Assigned to</Table.HeaderCell>
-                                                <Table.HeaderCell>Status</Table.HeaderCell>
-                                            </Table.Row>
-                                        </Table.Header>
-                                        <Table.Body>
-                                            {table}
-                                        </Table.Body>
-                                    </Table> 
-                                </Fragment> 
-                                )}
+                {loading?<Loader active size='large'>Loading</Loader>:
+                (loadError)?'Someting went wrong':
+                    <Fragment>
+                        {head}
+                        <Table striped>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell>Issue</Table.HeaderCell>
+                                    <Table.HeaderCell>Created by</Table.HeaderCell>
+                                    <Table.HeaderCell>Created on</Table.HeaderCell>
+                                    <Table.HeaderCell>Assigned to</Table.HeaderCell>
+                                    <Table.HeaderCell>Status</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {table}
+                            </Table.Body>
+                        </Table> 
+                    </Fragment> 
+                }
             </div>
         )
     }
