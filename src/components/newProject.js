@@ -5,6 +5,7 @@ import { Header, Form } from 'semantic-ui-react'
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { connect } from 'react-redux'
+import { withRouter } from "react-router";
 
 class NewProject extends Component {
     constructor(props){
@@ -33,7 +34,6 @@ class NewProject extends Component {
 
     handleSubmit = (event) => {
         
-        console.log(this.state)
         event.preventDefault()
 
         let formData = new FormData()
@@ -58,7 +58,7 @@ class NewProject extends Component {
 
         axios.post('http://localhost:8000/tracker/project/', formData )
         .then(res => {
-            console.log(res.data)
+            this.props.history.push('/projects/'+res.data.id)
         })
         .catch(err =>{
             console.log(err)
@@ -109,5 +109,7 @@ class NewProject extends Component {
 const mapStateToProps = (state) => ({
     user : state.user.item
 })
+
+withRouter(NewProject)
 
 export default connect(mapStateToProps)(NewProject)

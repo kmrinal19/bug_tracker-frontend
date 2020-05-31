@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import axios from 'axios'
-import { Header,Loader, Divider, Comment, Form} from 'semantic-ui-react'
+import { Header,Loader, Divider, Comment, Form, Message} from 'semantic-ui-react'
 import { connect } from 'react-redux'
 
 import authenticate from '../authenticate'
@@ -87,6 +87,10 @@ class IssueDetails extends Component {
                 <br/>
                 <span>{this.state.issueDetail.created_by_name} reported this issue on {this.state.issueDetail.created_on}</span>
                 <br/>
+                <Message>
+                    <Message.Header>Description</Message.Header>
+                    {this.state.issueDetail.description}
+                </Message>
                 <Divider/>
            </Fragment>
         )

@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
-import { Table } from 'semantic-ui-react'
+import { Table, Button } from 'semantic-ui-react'
+import { withRouter } from "react-router";
 
 import authenticate from '../authenticate'
 import { Link } from 'react-router-dom'
@@ -40,18 +41,21 @@ class ProjectTable extends Component{
             </Table.Row>
         ))
         return(
-            <Table striped>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Project</Table.HeaderCell>
-                        <Table.HeaderCell>Created by</Table.HeaderCell>
-                        <Table.HeaderCell>Created on</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                    {table}
-                </Table.Body>
-            </Table>    
+            <Fragment>
+                <Table striped>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>Project</Table.HeaderCell>
+                            <Table.HeaderCell>Created by</Table.HeaderCell>
+                            <Table.HeaderCell>Created on</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {table}
+                    </Table.Body>
+                </Table>  
+            </Fragment>
+  
         )
     }
 }
@@ -65,6 +69,12 @@ class Projects extends Component {
 
         return(
             <Fragment>
+                <Button 
+                    content='Create Project' 
+                    icon='add' 
+                    labelPosition='left'
+                    onClick = {() => {this.props.history.push('/newproject')}}
+                    />
                 <ProjectTable/>
             </Fragment>
         )
@@ -74,5 +84,7 @@ class Projects extends Component {
 const mapStateToProps = (state) => ({
     user : state.user.item
 })
+
+withRouter(Projects)
 
 export default connect(mapStateToProps)(Projects)

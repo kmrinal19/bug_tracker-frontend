@@ -14,6 +14,7 @@ import Projects from './components/projects'
 import ProjectDetail from './components/projectDetail'
 import IssueDetails from './components/issueDetails'
 import NewProject from './components/newProject'
+import NewIssue from './components/newIssue'
 
 import store from './store'
 
@@ -39,6 +40,8 @@ function App() {
           <Route exact path = '/issue/:id' component = {IssueDetails}/>
 
           <Route exact path = '/newproject' component = {NewProject}/>
+
+          <Route exact path = '/projects/:id/newissue' component = {NewIssue}/>
 
         </Switch>
       </Router>

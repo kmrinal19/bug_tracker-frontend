@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import axios from 'axios'
-import { Table, Header, Message, Loader } from 'semantic-ui-react'
+import { Table, Header, Message, Loader} from 'semantic-ui-react'
 import { connect } from 'react-redux'
 
 import authenticate from '../authenticate'
@@ -53,6 +53,7 @@ class ProjectDetail extends Component {
                     <Message.Header>Wiki</Message.Header>
                     {this.state.projectDetail.wiki}
                 </Message>
+                <Link to={'/projects/'+this.state.projectDetail.id+'/newissue/'}>Report issue</Link>
             </Fragment>
         )
 
@@ -88,7 +89,7 @@ class ProjectDetail extends Component {
                             <Table.Body>
                                 {table}
                             </Table.Body>
-                        </Table> 
+                        </Table>
                     </Fragment> 
                 }
             </div>
