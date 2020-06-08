@@ -1,12 +1,13 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
-import { Table, Button } from 'semantic-ui-react'
-import { withRouter } from "react-router";
+import { Table, Breadcrumb, Container, Menu } from 'semantic-ui-react'
+import { withRouter } from "react-router"
 
 import authenticate from '../authenticate'
 import { Link } from 'react-router-dom'
 import { ALL_PROJECTS_URL, LOGIN_HOME_URL } from '../Const'
+import '../css/projects.css'
 
 class ProjectTable extends Component{
     constructor(props){
@@ -37,12 +38,12 @@ class ProjectTable extends Component{
             <Table.Row key = {project.id}>
                 <Table.Cell><Link to ={'/projects/'+project.id}>{project.name}</Link></Table.Cell>
                 <Table.Cell>{project.created_by_name}</Table.Cell>
-                <Table.Cell>{project.created_on}</Table.Cell>
+                <Table.Cell>{(new Date(project.created_on)).toDateString()}</Table.Cell>
             </Table.Row>
         ))
         return(
             <Fragment>
-                <Table striped>
+                <Table padded>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>Project</Table.HeaderCell>
@@ -68,15 +69,23 @@ class Projects extends Component {
     render() {
 
         return(
-            <Fragment>
-                <Button 
-                    content='Create Project' 
-                    icon='add' 
-                    labelPosition='left'
-                    onClick = {() => {this.props.history.push('/newproject')}}
-                    />
+            <Container>
+                <Menu borderless className='projectMenu' >
+                    <Menu.Item>
+                        <Breadcrumb size='large'>
+                            <Breadcrumb.Section as = {Link} to='/projects'>Projects</Breadcrumb.Section>
+                        </Breadcrumb>                        
+                    </Menu.Item>
+                    <Menu.Menu position = 'right'>
+                        <Menu.Item
+                                content='Create Project' 
+                                icon='add' 
+                                onClick = {() => {this.props.history.push('/newproject')}}
+                            />
+                    </Menu.Menu>
+                </Menu>
                 <ProjectTable/>
-            </Fragment>
+            </Container>
         )
     }
 }

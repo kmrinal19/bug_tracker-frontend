@@ -1,6 +1,5 @@
 import React from 'react';
-import './App.css';
-import { Container } from 'semantic-ui-react';
+import './css/App.css';
 import {
   BrowserRouter as Router,
   Switch,
@@ -15,6 +14,9 @@ import ProjectDetail from './components/projectDetail'
 import IssueDetails from './components/issueDetails'
 import NewProject from './components/newProject'
 import NewIssue from './components/newIssue'
+import Footer from './components/footer'
+import Navbar from './components/navbar'
+import Logout from './components/logout'
 
 import store from './store'
 
@@ -23,12 +25,12 @@ function App() {
   return (
     <Provider store = {store}>
       <Router>
+
+        <Navbar/>
         <Switch>
 
           <Route exact path = '/'>
-            <Container style = {{margin:20}}>
-              <Login></Login>
-            </Container>
+              <Login/>
           </Route>
 
           <Route path = '/auth' component = {Auth}/>
@@ -43,7 +45,12 @@ function App() {
 
           <Route exact path = '/projects/:id/newissue' component = {NewIssue}/>
 
+          <Route exact path = '/logout' component = {Logout}/>
+
         </Switch>
+
+        <Footer/>
+
       </Router>
     </Provider>
   );

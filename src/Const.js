@@ -6,5 +6,6 @@ export const WHOAMI_URL = 'http://localhost:8000/tracker/whoami/'
 export const ALL_PROJECTS_URL = 'http://localhost:8000/tracker/project/'
 export const ISSUE_URL = 'http://localhost:8000/tracker/issue/'
 export const LOGIN_HOME_URL = 'http://localhost:3000/'
+export const LOGOUT_URL = 'http://localhost:8000/tracker/api-auth/logout/'
 
 export const AUTHENTICATION_FAILED = 'AUTHENTICATION_FAILED'

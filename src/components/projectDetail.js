@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import axios from 'axios'
-import { Table, Header, Message, Loader} from 'semantic-ui-react'
+import { Table, Header, Message, Loader, Breadcrumb} from 'semantic-ui-react'
 import { connect } from 'react-redux'
 
 import authenticate from '../authenticate'
@@ -47,6 +47,12 @@ class ProjectDetail extends Component {
 
         const head= (
             <Fragment>
+                <Breadcrumb>
+                    <Breadcrumb.Section as = {Link} to='/projects'>Projects</Breadcrumb.Section>
+                    <Breadcrumb.Divider icon = 'right angle'/>
+                    <Breadcrumb.Section as = {Link} to={'/projects/'+this.state.projectDetail.id}>{this.state.projectDetail.name}</Breadcrumb.Section>
+                </Breadcrumb>
+                <br/>
                 <Header as = 'h2'>Project: {this.state.projectDetail.name}</Header>
                 <br/>
                 <Message>

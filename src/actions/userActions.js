@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import { LOGIN_USER, SET_USER } from './types'
+import { LOGIN_USER, SET_USER, LOGOUT_USER } from './types'
 import { LOGIN_URL } from '../Const'
 
 export const loginUser = (code) => dispatch => {
@@ -23,5 +23,11 @@ export const setUser = (userData) => dispatch => {
     dispatch({
         type: SET_USER,
         payload: userData
+    })
+}
+
+export const logoutUser = () => dispatch => {
+    dispatch({
+        type: LOGOUT_USER
     })
 }
