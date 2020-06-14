@@ -107,7 +107,10 @@ class IssueDetails extends Component {
                         <Comment.Text>{comment.commentBody}</Comment.Text>
                         <Comment.Actions>
                             <Comment.Action>Like</Comment.Action>
-                            {this.props.user.user.id===comment.user? <Comment.Action>Delete</Comment.Action>:''}
+                            {this.props.user.user?
+                                this.props.user.user.id===comment.user? <Comment.Action>Delete</Comment.Action>:''
+                                :''
+                            }
                         </Comment.Actions>
                     </Comment.Content>
                 </Comment>                

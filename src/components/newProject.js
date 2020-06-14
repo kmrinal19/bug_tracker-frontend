@@ -1,11 +1,14 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import axios from 'axios'
 import authenticate from '../authenticate'
-import { Header, Form } from 'semantic-ui-react'
+import { Header, Form, Container, Menu, Breadcrumb } from 'semantic-ui-react'
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { connect } from 'react-redux'
 import { withRouter } from "react-router";
+import { Link } from 'react-router-dom'
+import {GET_USER_URL} from '../Const'
+import '../css/newProject.css'
 
 class NewProject extends Component {
     constructor(props){
@@ -13,11 +16,17 @@ class NewProject extends Component {
         this.state = {
             name : '',
             wiki : '',
-            media : []
+            media : [],
+            team_member : [],
+            userList: []
         }
     }
     componentDidMount(){
         authenticate()
+        axios.get(GET_USER_URL)
+        .then(response => {
+            this.setState({userList: response.data})
+        })
     }
 
     handleChange = (event) => {
@@ -30,6 +39,10 @@ class NewProject extends Component {
 
     handleEditorChange = (event, editor) => {
         this.setState({wiki : editor.getData()})
+    }
+
+    handleTeamChange = (event, {value}) => {
+        this.setState({team_member:value})
     }
 
     handleSubmit = (event) => {
@@ -47,6 +60,13 @@ class NewProject extends Component {
             'wiki',
             this.state.wiki
         )
+
+        for(let i = 0; i < (this.state.team_member).length; i++){
+            formData.append(
+                'team_member',
+                this.state.team_member[i]
+            )
+        }
 
         for(let i = 0; i < (this.state.media).length; i++){
             formData.append(
@@ -67,7 +87,15 @@ class NewProject extends Component {
     }
 
     render() {
-
+        var options = []
+        if(this.state.userList[0]){
+            options = this.state.userList.map((user) =>({
+                key: user.id,
+                text: user.name + ' '+ user.enrollmentNumber,
+                value: user.id
+            }))
+        }
+            
 
         const ckeditor = (
             <CKEditor
@@ -83,25 +111,58 @@ class NewProject extends Component {
 
         const form = (
             <Form onSubmit = {this.handleSubmit} encType='multipart/form-data'>
-                <Form.Input name = 'name' label='Project Name:' type = 'text' onChange={this.handleChange} />
+                <Form.Input 
+                    name = 'name' 
+                    placeholder = {'your project\'s name'}
+                    label='Project Name:' 
+                    type = 'text' 
+                    onChange={this.handleChange}
+                    className = 'input_small'
+                     />
                 <Form.Field>
                     <label>Description:</label>
                     {ckeditor}
                 </Form.Field>
                 <Form.Field>
                     <label>Upload images:</label>
-                    <input name = 'media'type = 'file' multiple onChange = {this.handleImageChange}/>
+                    <input 
+                        name = 'media'
+                        type = 'file' 
+                        multiple 
+                        onChange = {this.handleImageChange}
+                        className = 'input_small'
+                        />
                 </Form.Field>
-                <Form.Button>Create now</Form.Button>
+                <Form.Dropdown
+                    name = 'team_member'
+                    label = 'Add team members:'
+                    placeholder='Add team members'
+                    multiple
+                    search
+                    selection
+                    options={options}
+                    className = 'input_small'
+                    onChange={this.handleTeamChange}
+                />
+                <Form.Button positive>Create now</Form.Button>
             </Form>
 
         )
 
         return (
-            <Fragment>
+            <Container>
+                <Menu borderless className='projectMenu' >
+                    <Menu.Item>
+                        <Breadcrumb size='large'>
+                            <Breadcrumb.Section as = {Link} to='/projects'>Projects</Breadcrumb.Section>
+                            <Breadcrumb.Divider icon='right arrow' />
+                            <Breadcrumb.Section>New Project</Breadcrumb.Section>
+                        </Breadcrumb>                        
+                    </Menu.Item>
+                </Menu>
                 <Header as = 'h2'>Create a new Project</Header>
                 {form}
-            </Fragment>
+            </Container>
         )
     }
 }
