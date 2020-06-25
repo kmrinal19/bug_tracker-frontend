@@ -1,11 +1,14 @@
 import React, { Component, Fragment } from 'react'
 import axios from 'axios'
 import authenticate from '../authenticate'
-import { Header, Form, Dropdown } from 'semantic-ui-react'
+import { Header, Form, Dropdown, Container, Menu, Breadcrumb } from 'semantic-ui-react'
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { connect } from 'react-redux'
 import { withRouter } from "react-router";
+import {Link} from 'react-router-dom'
+import {TAG_URL} from '../Const'
+import '../css/newIssue.css'
 
 class NewIssue extends Component {
     constructor(props){
@@ -17,6 +20,8 @@ class NewIssue extends Component {
             issue_type:'',
             media:[],
             project_name : '',
+            tag:[],
+            tagList:[],
             loadError:false
         }
     }
@@ -36,6 +41,13 @@ class NewIssue extends Component {
         .catch(err =>{
             this.setState({loadError:true})
         })
+
+        axios.get(TAG_URL)
+        .then(response =>{
+            if(response.status === 200){
+                this.setState({tagList: response.data})
+            }
+        })
     }
     
     handleChange = (event) => {
@@ -52,6 +64,10 @@ class NewIssue extends Component {
 
     handleDropdownChange = (event, data) => {
         this.setState({issue_type: data.value})
+    }
+
+    handleTagChange = (event, {value}) => {
+        this.setState({tag: value})
     }
 
     handleSubmit = (event) => {
@@ -86,6 +102,13 @@ class NewIssue extends Component {
                 this.state.media[i]
             )
         }
+
+        for(let i = 0; i < (this.state.tag).length; i++){
+            formData.append(
+                'tag',
+                this.state.tag[i]
+            )
+        }
         
 
         axios.post('http://localhost:8000/tracker/issue/', formData )
@@ -113,6 +136,29 @@ class NewIssue extends Component {
             }
         ]
 
+        var tags = []
+        if(this.state.tagList[0]){
+            tags = this.state.tagList.map(tag => ({
+                key : tag.id,
+                text : tag.tag_name,
+                value : tag.id
+            }))
+        }
+
+        const head = (
+            <Menu borderless className='projectMenu' >
+                <Menu.Item>
+                    <Breadcrumb size = 'large'>
+                        <Breadcrumb.Section as = {Link} to='/projects'>Projects</Breadcrumb.Section>
+                        <Breadcrumb.Divider icon = 'right angle'/>
+                        <Breadcrumb.Section as = {Link} to={'/projects/'+this.state.project}>{this.state.project_name}</Breadcrumb.Section>
+                        <Breadcrumb.Divider icon = 'right angle'/>
+                        <Breadcrumb.Section>Report Issue</Breadcrumb.Section>
+                    </Breadcrumb>
+                </Menu.Item>
+            </Menu>
+        )
+
         const ckeditor = (
             <CKEditor
                 editor={ ClassicEditor }
@@ -127,7 +173,7 @@ class NewIssue extends Component {
 
         const form = (
             <Form onSubmit = {this.handleSubmit} encType='multipart/form-data'>
-                <Form.Input name = 'heading' label='Issue Heading:' type = 'text' onChange={this.handleChange} />
+                <Form.Input name = 'heading' label='Issue Heading:' type = 'text' onChange={this.handleChange} className='input_medium'/>
                 <Form.Field>
                     <label>Description:</label>
                     {ckeditor}
@@ -139,12 +185,24 @@ class NewIssue extends Component {
                         selection
                         options = {issue_type}
                         onChange={this.handleDropdownChange}
+                        className='input_small'
                     />
                 </Form.Field>
                 <Form.Field>
                     <label>Upload images:</label>
-                    <input name = 'media'type = 'file' multiple onChange = {this.handleImageChange}/>
+                    <input name = 'media'type = 'file' multiple onChange = {this.handleImageChange} className='input_small'/>
                 </Form.Field>
+                <Form.Dropdown
+                    name = 'tag'
+                    label = 'Tags:'
+                    placeholder='Add tags'
+                    multiple
+                    search
+                    selection
+                    options={tags}
+                    className = 'input_small'
+                    onChange = {this.handleTagChange}
+                />
                 <Form.Button>Create now</Form.Button>
             </Form>
 
@@ -153,14 +211,15 @@ class NewIssue extends Component {
         return (
             <Fragment>
                 {this.state.loadError?
-                    <div>Something went wrong</div>
+                    <Container>Something went wrong</Container>
                     :
-                    <Fragment>
-                    <Header as = 'h2'>Project: {this.state.project_name}</Header>
-                    <br/>
-                    <Header as = 'h2'>Create a new Issue</Header>
-                    {form}
-                </Fragment>
+                    <Container>
+                        {head}
+                        <Header as = 'h2'>Project: {this.state.project_name}</Header>
+                        <br/>
+                        <Header as = 'h2'>Create a new Issue</Header>
+                        {form}
+                    </Container>
                 }
             </Fragment>
         )

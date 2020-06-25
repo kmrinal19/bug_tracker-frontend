@@ -1,0 +1,6 @@
+.spanPointer{
+    display: inline-block;
+}
+.spanPointer:hover{
+    cursor: pointer;
+}

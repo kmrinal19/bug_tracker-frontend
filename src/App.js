@@ -17,6 +17,8 @@ import NewIssue from './components/newIssue'
 import Footer from './components/footer'
 import Navbar from './components/navbar'
 import Logout from './components/logout'
+import MyPage from './components/myPage'
+import EditProject from './components/editProject'
 
 import store from './store'
 
@@ -46,6 +48,10 @@ function App() {
           <Route exact path = '/projects/:id/newissue' component = {NewIssue}/>
 
           <Route exact path = '/logout' component = {Logout}/>
+
+          <Route exact path = '/myPage' component = {MyPage}/>
+
+          <Route exact path = '/projects/:id/editProject' component = {EditProject}/>
 
         </Switch>
 

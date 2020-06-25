@@ -1,18 +1,62 @@
 import React, { Component} from 'react'
-// import authenticate from '../authenticate'
-import { Menu, Image, Container, Input, Dropdown} from 'semantic-ui-react'
+import { Menu, Image, Container, Dropdown} from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
+import axios from 'axios'
 
+import { ALL_PROJECTS_URL } from '../Const'
 import '../css/navbar.css';
 
-class Navbar extends Component {
+class Search extends Component{
+    constructor(props){
+        super(props)
+        this.state = {
+            projects : []
+        }
+    }
+    componentDidMount(){
+        axios.get(ALL_PROJECTS_URL)
+        .then(response => {
+            this.setState({projects:response.data})
+        })
+    }
 
+    handleSearchChange = (event, {value}) => {
+        window.location.href = '/projects/'+value
+    }
+
+    render(){
+
+        var projects = []
+        projects = this.state.projects.map(project => (
+            {
+                key : project.id,
+                text : project.name,
+                value : project.id
+            }
+        ))
+
+        return(
+            <Dropdown
+                options = {projects}
+                placeholder = 'Search...'
+                icon = 'search'
+                search
+                selection
+                onChange = {this.handleSearchChange}
+                selectOnBlur = {false}
+                />
+        )
+
+    }
+}
+
+class Navbar extends Component {
 
     render() {
         
         const options = [
-            { key: 'user', as: Link, to:'/projects',text: 'My page', icon: 'user' },
+            { key: 'user', as: Link, to:'/myPage',text: 'My page', icon: 'user' },
             { key: 'sign-out', as: Link, to:'/logout', text: 'Sign Out', icon: 'sign out', },
           ]
 
@@ -33,7 +77,7 @@ class Navbar extends Component {
                             />
                         </Menu.Item>
                         <Menu.Item>
-                            <Input icon='search' placeholder='Search...' />
+                            <Search />
                         </Menu.Item>
                         <Menu.Menu position='right'>
                             <Menu.Item
@@ -69,6 +113,5 @@ class Navbar extends Component {
 const mapStateToProps = (state) => ({
     user : state.user.item
 })
-
 
 export default connect(mapStateToProps)(Navbar)

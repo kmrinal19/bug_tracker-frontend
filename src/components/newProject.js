@@ -105,7 +105,7 @@ class NewProject extends Component {
                     placeholder:'Tell something about your project....',       
                     toolbar: ['heading', '|', 'bold', 'italic', 'blockQuote', 'link', 'numberedList', 'bulletedList', 'insertTable',
                         'tableColumn', 'tableRow', 'mergeTableCells', '|', 'undo', 'redo']
-                }}     
+                }}   
             />
         )
 

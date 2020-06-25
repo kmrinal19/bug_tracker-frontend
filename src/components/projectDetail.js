@@ -1,27 +1,31 @@
 import React, { Component, Fragment } from 'react'
 import axios from 'axios'
-import { Table, Header, Message, Loader, Breadcrumb, Container, Menu, Grid, Button, Image, Dropdown} from 'semantic-ui-react'
+import { Table, Header, Message, Loader, Breadcrumb, Container, Menu, Grid, Button, Image, Dropdown, Label, Icon, Confirm} from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import parse from 'html-react-parser'
 import authenticate from '../authenticate'
 import { Link } from 'react-router-dom'
 import { ALL_PROJECTS_URL, LOGIN_HOME_URL } from '../Const'
 import '../css/projects.css'
+import '../css/projectDetail.css'
 
 function IssueTable (props){
 
     const table = props.projectIssues.map(issue => (
         <Table.Row key = {issue.id}>
-            <Table.Cell><Link to = {'/issue/'+issue.id}>{issue.heading}</Link></Table.Cell>
+            <Table.Cell>
+                <Link to = {'/issue/'+issue.id}>{issue.heading}</Link>&nbsp;
+                {issue.tag_name.map(tag =>(<Label color = 'teal' horizontal  key = {tag}>{tag}</Label>))}
+            </Table.Cell>
             <Table.Cell>{issue.created_by_name}</Table.Cell>
             <Table.Cell>{(new Date(issue.created_on)).toDateString()}</Table.Cell>
-            <Table.Cell>{issue.assigned_to_name}</Table.Cell>
-            <Table.Cell>{issue.status}</Table.Cell>
+            <Table.Cell>{issue.assigned_to_name.map(assigned => (<span key={assigned.id}>{assigned.name}  </span>))}</Table.Cell>
+            <Table.Cell>{issue.status === 'O'? 'Open' : 'Close'}</Table.Cell>
         </Table.Row>
     ))
 
     return(
-        <Table>
+        <Table fixed padded>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Issue</Table.HeaderCell>
@@ -42,9 +46,7 @@ function IssueTable (props){
 class Issues extends Component{
     constructor(props){
         super(props)
-        const DISPLAY_OPTIONS = ['ALL','OPEN','CLOSE']
         this.state={
-            displayOption : 'ALL',
             displayIssues:this.props.projectDetail.projectIssues,
         }
     }
@@ -186,10 +188,11 @@ class ProjectDetail extends Component {
         this.state={
             projectDetail : {
                     projectIssues:[],
-                    project_media: [],
+                    project_media: []
                 },
             isLoading: true,
-            loadError: false
+            loadError: false,
+            showDelete : false,
         }
     }
 
@@ -217,6 +220,25 @@ class ProjectDetail extends Component {
         })
     }
 
+    showDelete  = () => {
+        this.setState({showDelete:true})
+    }
+
+    handleCancel = () => {
+        this.setState({showDelete:false})
+    }
+
+    handleConfirm = () => {
+        this.setState({showDelete:false})
+        axios.delete(ALL_PROJECTS_URL+this.state.projectDetail.id)
+        .then(response => {
+            window.location.href = '/projects'
+        })
+        .catch(err =>{
+            console.log(err)
+        })
+    }
+
     render() {
 
         const head= (
@@ -231,6 +253,26 @@ class ProjectDetail extends Component {
                     </Menu.Item>
                 </Menu>
                 <Header as = 'h2'>{this.state.projectDetail.name}</Header>
+                {/* currently only project creator is allowed to edit */}
+                {this.props.user.user? (this.props.user.user.id === this.state.projectDetail.created_by ? (
+                    <Fragment>
+                        <Icon name = 'edit'/>
+                        <Link to = {'/projects/'+this.state.projectDetail.id+'/editProject'}> Edit Project</Link>
+                        <Icon name = 'trash' style = {{marginLeft:20}}/>
+                        <span onClick = {this.showDelete} className = 'spanPointer'> Delete Project</span>
+                        <br/><br/>
+                        <Confirm
+                            open = {this.state.showDelete}
+                            content = {this.state.projectDetail.name+' will be deleted. Are you sure?'}
+                            cancelButton = 'No'
+                            confirmButton = 'Yes'
+                            onCancel = {this.handleCancel}
+                            onConfirm = {this.handleConfirm}
+                        />
+                    </Fragment>
+                    ) : '')
+                    : ''
+                }
                 <Grid columns='three'>
                     <Grid.Row>
                         <Grid.Column>
@@ -276,5 +318,6 @@ class ProjectDetail extends Component {
 const mapStateToProps = (state) => ({
     user : state.user.item
 })
+
 
 export default connect(mapStateToProps)(ProjectDetail)
