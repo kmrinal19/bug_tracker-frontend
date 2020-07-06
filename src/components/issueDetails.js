@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import axios from 'axios'
-import { Header,Loader, Divider, Comment, Form, Message, Container, Menu, Breadcrumb, Grid, Label, Button, Image, Confirm, Icon} from 'semantic-ui-react'
+import { Header,Loader, Divider, Comment, Form, Message, Container, Menu, Breadcrumb, Grid, Label, Button, Image, Confirm, Icon, Dropdown} from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import parse from 'html-react-parser'
@@ -318,6 +318,14 @@ class IssueDetails extends Component {
         this.setState({comment:''})
     }
 
+    handleStatusChange = (event, {value}) => {
+        let data = JSON.stringify({status:value})
+        axios.patch(ISSUE_URL+this.state.issueDetail.id+'/', data, {headers : {'Content-Type':'application/json'}})
+        .catch(err => {
+            console.log(err)
+        })
+    }
+
     showDelete  = () => {
         this.setState({showDelete:true})
     }
@@ -343,6 +351,11 @@ class IssueDetails extends Component {
             <Image src = {media.media} size = 'medium' key = {media.id}/>
         ))
 
+        let is_team_or_admin_or_reporter = false
+        // currently only checking for team_member or issue reporter or admin
+        if(this.state.projectDetail.id && this.props.user.user){
+            is_team_or_admin_or_reporter = this.state.projectDetail.team_member.includes(this.props.user.user.id) || this.state.issueDetail.created_by === this.props.user.user.id || this.props.user.user.is_superuser
+        }
 
         const head = (
             <Fragment>
@@ -389,7 +402,17 @@ class IssueDetails extends Component {
                 }
                 <strong>Issue type: </strong><span>{this.state.issueDetail.issue_type}</span>
                 <br/>
-                <strong>Issue status: </strong><span>{this.state.issueDetail.status}</span>
+                <strong>Issue status: </strong>
+                <span>{is_team_or_admin_or_reporter? <Dropdown
+                            options = {[
+                                {key:'open',text:'Open',value:'O'},
+                                {key:'close',text:'Close',value:'C'},
+                            ]}
+                            defaultValue = {this.state.issueDetail.status}
+                            onChange = {this.handleStatusChange}
+                        />
+                    : this.state.issueDetail.status === 'O'? 'Open' :'Closed'}
+                </span>
                 <br/>
                 <span>{this.state.issueDetail.created_by_name} reported this issue on {(new Date(this.state.issueDetail.created_on)).toDateString()}</span>
                 <br/>

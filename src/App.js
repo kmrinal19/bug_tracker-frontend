@@ -19,6 +19,8 @@ import Navbar from './components/navbar'
 import Logout from './components/logout'
 import MyPage from './components/myPage'
 import EditProject from './components/editProject'
+import AdminPanel from './components/adminPanel'
+import UserInfo from './components/userInfo'
 
 import store from './store'
 
@@ -51,7 +53,11 @@ function App() {
 
           <Route exact path = '/myPage' component = {MyPage}/>
 
+          <Route exact path = '/adminPanel' component = {AdminPanel}/>
+
           <Route exact path = '/projects/:id/editProject' component = {EditProject}/>
+
+          <Route exact path = '/user/:id' component = {UserInfo}/>
 
         </Switch>
 

@@ -55,12 +55,22 @@ class Navbar extends Component {
 
     render() {
         
-        const options = [
-            { key: 'user', as: Link, to:'/myPage',text: 'My page', icon: 'user' },
-            { key: 'sign-out', as: Link, to:'/logout', text: 'Sign Out', icon: 'sign out', },
-          ]
+        var options = []
 
         if(this.props.user.token){
+            if(this.props.user.user.is_superuser){
+                options = [
+                    { key: 'user', as: Link, to:'/myPage',text: 'My page', icon: 'user' },
+                    { key: 'admin', as: Link, to:'/adminPanel',text: 'Admin Panel', icon: 'settings'},
+                    { key: 'sign-out', as: Link, to:'/logout', text: 'Sign Out', icon: 'sign out', },
+                  ]
+            }
+            else{
+                options = [
+                    { key: 'user', as: Link, to:'/myPage',text: 'My page', icon: 'user' },
+                    { key: 'sign-out', as: Link, to:'/logout', text: 'Sign Out', icon: 'sign out', },
+                  ]
+            }
             return (
                 <Menu
                     className = 'navbar'

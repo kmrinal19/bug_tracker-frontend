@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import axios from 'axios'
 import authenticate from '../authenticate'
-import { Header, Form, Dropdown, Container, Menu, Breadcrumb } from 'semantic-ui-react'
+import { Header, Form, Dropdown, Container, Menu, Breadcrumb, Loader } from 'semantic-ui-react'
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { connect } from 'react-redux'
@@ -22,7 +22,8 @@ class NewIssue extends Component {
             project_name : '',
             tag:[],
             tagList:[],
-            loadError:false
+            loadError:false,
+            isLoading:true,
         }
     }
     componentDidMount(){
@@ -35,7 +36,9 @@ class NewIssue extends Component {
         axios.get('http://localhost:8000/tracker/project/'+id)
         .then(response =>{
             if(response.status === 200 && response.data.name){
-                this.setState({project_name:response.data.name})
+                this.setState({project_name:response.data.name,
+                    isLoading:false
+                })
             }
         })
         .catch(err =>{
@@ -110,7 +113,7 @@ class NewIssue extends Component {
             )
         }
         
-
+        this.setState({isLoading:true})
         axios.post('http://localhost:8000/tracker/issue/', formData )
         .then(res => {
             this.props.history.push('/issue/'+res.data.id)
@@ -208,18 +211,21 @@ class NewIssue extends Component {
 
         )
 
+        const loading = this.state.isLoading
+
         return (
             <Fragment>
-                {this.state.loadError?
-                    <Container>Something went wrong</Container>
-                    :
-                    <Container>
-                        {head}
-                        <Header as = 'h2'>Project: {this.state.project_name}</Header>
-                        <br/>
-                        <Header as = 'h2'>Create a new Issue</Header>
-                        {form}
-                    </Container>
+                {loading? <Loader active size='large'>Loading</Loader>:
+                    (this.state.loadError)?
+                        <Container>Something went wrong</Container>
+                        :
+                        <Container>
+                            {head}
+                            <Header as = 'h2'>Project: {this.state.project_name}</Header>
+                            <br/>
+                            <Header as = 'h2'>Create a new Issue</Header>
+                            {form}
+                        </Container>
                 }
             </Fragment>
         )
