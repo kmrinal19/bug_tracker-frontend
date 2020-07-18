@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import Avatar from 'react-avatar'
 
 import authenticate from '../authenticate'
 import { Container, Image, Header, Divider, List } from 'semantic-ui-react'
@@ -17,11 +18,12 @@ class MyPage extends Component {
         return (
             <Container>
                 <Container textAlign = 'center' className = 'myPageHead'>
-                    <Image 
+                    {/* <Image 
                         src = {require('../images/user.svg')} 
                         size = 'small'
                         centered
-                    />
+                    /> */}
+                    <Avatar color={Avatar.getRandomColor('sitebase', ['red', 'green', 'blue'])} size = "120" round name = {user? user.name :""}/>
                     <Header as = 'h3'>{user?user.name : ''}</Header>
                 </Container>
                 <Header as = 'h2'>Projects: {user? user.teamMember_of.length :''}</Header>

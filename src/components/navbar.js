@@ -3,6 +3,7 @@ import { Menu, Image, Container, Dropdown} from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import axios from 'axios'
+import Avatar from 'react-avatar'
 
 import { ALL_PROJECTS_URL } from '../Const'
 import '../css/navbar.css';
@@ -105,8 +106,9 @@ class Navbar extends Component {
                                 item
                                 trigger = {(
                                     <span>
-                                        <Image avatar src = {require('../images/user_inverted.svg')}/>
-                                        {this.props.user.user.name}
+                                        {/* <Image avatar src = {require('../images/user_inverted.svg')}/> */}
+                                        <Avatar color={Avatar.getRandomColor('sitebase', ['red', 'green', 'blue'])} size = "40" round name = {this.props.user.user.name}/>
+                                        
                                     </span>
                                 )}
                                 options = {options}

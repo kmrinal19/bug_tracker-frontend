@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import axios from 'axios'
 import { Container, Image, Header, Divider, List, Menu, Breadcrumb } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
+import Avatar from 'react-avatar'
 
 import {GET_USER_URL} from '../Const'
 import authenticate from '../authenticate'
@@ -44,11 +45,12 @@ class UserInfo extends Component {
                     </Menu.Item>
                 </Menu>
                 <Container textAlign = 'center' className = 'myPageHead'>
-                    <Image 
+                    {/* <Image 
                         src = {require('../images/user.svg')} 
                         size = 'small'
                         centered
-                    />
+                    /> */}
+                    <Avatar color={Avatar.getRandomColor('sitebase', ['red', 'green', 'blue'])} size = "120" round name = {user? user.name :""}/>
                     <Header as = 'h3'>{user.name?user.name : ''}</Header>
                 </Container>
                 <Header as = 'h2'>Projects: {user.teamMember_of? user.teamMember_of.length :''}</Header>
