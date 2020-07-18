@@ -78,12 +78,13 @@ class Navbar extends Component {
                     stackable
                     borderless
                     style = {{width:'100%'}}
+                    inverted
                 >
                     <Container>
                         <Menu.Item>
                             <Image
                                 size = 'mini'
-                                src = {require('../images/logo.png')}
+                                src = {require('../images/logo_inverted.png')}
                             />
                         </Menu.Item>
                         <Menu.Item>
@@ -94,15 +95,17 @@ class Navbar extends Component {
                                 as = {Link}
                                 to = '/projects'
                                 name = 'home'
+                                className = 'inverted_link'
                             />
                             <Menu.Item
                                 name = 'about'
+                                className = 'inverted_link'
                             />
                             <Dropdown
                                 item
                                 trigger = {(
                                     <span>
-                                        <Image avatar src = {require('../images/user.svg')}/>
+                                        <Image avatar src = {require('../images/user_inverted.svg')}/>
                                         {this.props.user.user.name}
                                     </span>
                                 )}

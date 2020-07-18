@@ -1,0 +1,28 @@
+.head{
+    min-height: 550px;
+    padding: '1em 0em';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.image_head{
+    width: 2.2em !important;
+    margin-left: .5em !important;
+}
+.large_header{
+    font-size: 4em !important;
+    display: flex;
+    align-items: center;
+    font-weight: normal !important;
+}
+.medium_header{
+    font-size: 2em !important;
+    font-weight: normal !important;
+}
+.login_btn{
+    background: linear-gradient(180deg, #51F9C6 0%, rgba(255, 255, 255, 0) 81.77%), #43D7EB !important;
+    border-radius: 10px !important;
+    margin-top: 1em !important;
+    font-size: 1.1em !important;
+}

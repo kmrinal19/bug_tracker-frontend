@@ -45,16 +45,21 @@ class AdminPanel extends Component {
         this.signal.cancel()
     }
 
-    handleStatusChange = (event, {value},user) => {
+    handleStatusChange = (event, {value}, user, request_user) => {
 
-        let data = JSON.stringify({is_active:value})
-        axios.patch(GET_USER_URL+user+'/', data, {headers : {'Content-Type':'application/json'}})
-        .then(response => {
-            console.log(response.data)
-        })
-        .catch(err =>{
-            console.log(err)
-        })
+        if(user === request_user){
+            console.log('Cannot disable self!')
+        }
+        else{
+            let data = JSON.stringify({is_active:value})
+            axios.patch(GET_USER_URL+user+'/', data, {headers : {'Content-Type':'application/json'}})
+            .then(response => {
+                console.log(response.data)
+            })
+            .catch(err =>{
+                console.log(err)
+            })
+        }
     }
 
     handleRoleChange = (event, {value},user) => {
@@ -80,7 +85,7 @@ class AdminPanel extends Component {
                             {key:'disabled',text:'Disabled',value:false},
                         ]}
                         defaultValue = {user.is_active}
-                        onChange = {(event, {value}) => this.handleStatusChange(event, {value}, user.id)}
+                        onChange = {(event, {value}) => this.handleStatusChange(event, {value}, user.id, this.props.user.user.id)}
                     />
                 </Table.Cell>
                 <Table.Cell>

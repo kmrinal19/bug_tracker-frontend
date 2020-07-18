@@ -1,5 +1,6 @@
 import React from 'react'
-import { Segment, Container, Grid, Icon } from 'semantic-ui-react'
+import { Segment, Container, Grid, Icon, Image } from 'semantic-ui-react'
+import '../css/footer.css'
 
 export default function Footer() {
     return (
@@ -8,10 +9,10 @@ export default function Footer() {
                 <Grid stackable
                     centered >
                     <Grid.Row centered>
-                        <Icon name = 'facebook official' size = 'large'/>
-                        <Icon name = 'github' size = 'large'/>
-                        <Icon name = 'instagram' size = 'large'/>
-                        <Icon name = 'linkedin' size = 'large'/>
+                        <Image src = {require('../images/icons/fb.svg')} className = 'footer_icon'/>
+                        <Image src = {require('../images/icons/github.svg')} className = 'footer_icon'/>
+                        <Image src = {require('../images/icons/insta.svg')} className = 'footer_icon'/>
+                        <Image src = {require('../images/icons/linkedin.svg')} className = 'footer_icon'/>
                     </Grid.Row>
                     <Grid.Row centered>
                         <p>
