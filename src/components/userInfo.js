@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
-import { Container, Image, Header, Divider, List, Menu, Breadcrumb } from 'semantic-ui-react'
+import { Container, Header, Divider, List, Menu, Breadcrumb } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import Avatar from 'react-avatar'
 

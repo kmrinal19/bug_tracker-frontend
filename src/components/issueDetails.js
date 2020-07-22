@@ -4,6 +4,7 @@ import { Header,Loader, Divider, Comment, Form, Message, Container, Menu, Breadc
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import parse from 'html-react-parser'
+import Avatar from 'react-avatar'
 
 import authenticate from '../authenticate'
 import { ISSUE_URL, LOGIN_HOME_URL, GET_USER_URL, ALL_PROJECTS_URL, TAG_URL } from '../Const'
@@ -326,6 +327,14 @@ class IssueDetails extends Component {
         })
     }
 
+    handleTypeChange = (event, {value}) => {
+        let data = JSON.stringify({issue_type:value})
+        axios.patch(ISSUE_URL+this.state.issueDetail.id+'/', data, {headers : {'Content-Type':'application/json'}})
+        .catch(err => {
+            console.log(err)
+        })
+    }
+
     showDelete  = () => {
         this.setState({showDelete:true})
     }
@@ -346,6 +355,19 @@ class IssueDetails extends Component {
     }
 
     render() {
+
+        const issue_type = [
+            {
+                key:'0',
+                text:'Bug',
+                value:'bug'
+            },
+            {
+                key:'1',
+                text:'Feature Request',
+                value:'Feature Request'
+            }
+        ]
 
         const media = this.state.issueDetail.issue_media.map(media => (
             <Image src = {media.media} size = 'medium' key = {media.id}/>
@@ -400,7 +422,17 @@ class IssueDetails extends Component {
                     ) : '')
                     : ''
                 }
-                <strong>Issue type: </strong><span>{this.state.issueDetail.issue_type}</span>
+                <strong>Issue type: </strong>
+                <span>
+                    {is_team_or_admin_or_reporter?
+                        <Dropdown
+                            options = {issue_type}
+                            defaultValue = {this.state.issueDetail.issue_type}
+                            onChange = {this.handleTypeChange}
+                        />
+                        :
+                    this.state.issueDetail.issue_type}
+                </span>
                 <br/>
                 <strong>Issue status: </strong>
                 <span>{is_team_or_admin_or_reporter? <Dropdown
@@ -428,7 +460,7 @@ class IssueDetails extends Component {
         const comments = (
             this.state.comments.map(comment => (
                 <Comment key = {comment.id}>
-                    <Comment.Avatar src = {require('../images/user.svg')}/>
+                    <Comment.Avatar as={Avatar} color={Avatar.getRandomColor('sitebase', ['red', 'green', 'blue'])} size = "40" round name = {comment.user_name}/>
                     <Comment.Content>
                         <Comment.Author>{comment.user_name}</Comment.Author>
                         <Comment.Metadata>

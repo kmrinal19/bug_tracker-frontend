@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { Header, Image, Container, Label, Segment } from 'semantic-ui-react'
+import { Header, Image, Label, Segment } from 'semantic-ui-react'
 import { CLIENT_ID, REDIRECT_URL, GET_ACCESS_CODE_URL } from '../Const'
 import authenticate_home from '../authenticate_home'
 import '../css/login.css'

@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import Avatar from 'react-avatar'
 
 import authenticate from '../authenticate'
-import { Container, Image, Header, Divider, List } from 'semantic-ui-react'
+import { Container, Header, Divider, List } from 'semantic-ui-react'
 import '../css/myPage.css'
 import { Link } from 'react-router-dom'
 

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import store from './store'
 
-import { WHOAMI_URL, LOGIN_HOME_URL, PROJECT_HOME_URL } from './Const'
+import { WHOAMI_URL, PROJECT_HOME_URL } from './Const'
 import { setUser } from './actions/userActions'
 
 const authenticate_home = () => {

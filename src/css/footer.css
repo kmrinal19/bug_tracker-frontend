@@ -2,3 +2,25 @@
     width: 23px !important;
     margin: 2px 7px;
 }
+.footer_left{
+    display: flex;
+}
+.footer_container{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+}
+.footer_right{
+    justify-self: end;
+    align-self: center;
+}
+@media only screen and (max-width: 356px){
+    .footer_container{
+        grid-template-columns: 1fr
+    }
+    .footer_left{
+        justify-self: center;
+    }
+    .footer_right{
+        justify-self: center;
+    }
+}
