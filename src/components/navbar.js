@@ -78,7 +78,7 @@ class Navbar extends Component {
                     attached = 'top'
                     stackable
                     borderless
-                    style = {{width:'100%'}}
+                    style = {{width:'100%', margin:0}}
                     inverted
                 >
                     <Container>

@@ -17,7 +17,6 @@ class Auth extends Component{
 
     componentDidMount(){
         if(!this.props.user.token){
-            console.log(!this.props.user.token)
             let values = queryString.parse(this.props.location.search)
             this.props.loginUser(values.code)
         }

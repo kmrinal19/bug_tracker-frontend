@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom'
 import { ALL_PROJECTS_URL, LOGIN_HOME_URL } from '../Const'
 import '../css/projects.css'
 import '../css/projectDetail.css'
+import Error from './error'
 
 function IssueTable (props){
 
@@ -192,6 +193,7 @@ class ProjectDetail extends Component {
                 },
             isLoading: true,
             loadError: false,
+            error_code:'',
             showDelete : false,
         }
     }
@@ -206,7 +208,7 @@ class ProjectDetail extends Component {
         axios.get(get_project_details_url)
         .then(response => {
             if(response.status === 200 && response.data.id){
-                this.setState({projectDetail:response.data, isLoading:false})
+                this.setState({projectDetail:response.data, isLoading:false, loadError:false})
             }
             else{
                 this.setState({loadError:true})
@@ -216,7 +218,8 @@ class ProjectDetail extends Component {
             if(err.response && err.response.status === 401){
                 window.location.href = LOGIN_HOME_URL
             }
-            this.setState({loadError:true,isLoading:false })
+            const err_code = err.response? err.response.status: ''
+            this.setState({loadError:true,isLoading:false, error_code: err_code})
         })
     }
 
@@ -301,15 +304,15 @@ class ProjectDetail extends Component {
         const loadError = this.state.loadError
 
         return(
-            <Container>
+            <Fragment>
                 {loading?<Loader active size='large'>Loading</Loader>:
-                (loadError)?'Someting went wrong':
-                    <Fragment>
+                (loadError)?<Error err_code = {this.state.error_code}/>:
+                    <Container>
                         {head}
                         <Issues projectDetail = {this.state.projectDetail}/>
-                    </Fragment> 
+                    </Container> 
                 }
-            </Container>
+            </Fragment>
         )
     }
 

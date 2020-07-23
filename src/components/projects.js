@@ -7,6 +7,7 @@ import { withRouter } from "react-router"
 import authenticate from '../authenticate'
 import { Link } from 'react-router-dom'
 import { ALL_PROJECTS_URL, LOGIN_HOME_URL } from '../Const'
+import Error from './error'
 import '../css/projects.css'
 
 class ProjectTable extends Component{
@@ -24,12 +25,15 @@ class ProjectTable extends Component{
             if(response.status === 200){
                 this.setState({table_data:response.data,isLoading:false})
             }
+            this.props.setLoadError(false, '')
         })
         .catch(err =>{
             if(err.response && err.response.status === 401){
                 window.location.href = LOGIN_HOME_URL
             }
+            const err_code = err.response? err.response.status: ''
             this.setState({loadError:true,isLoading:false })
+            this.props.setLoadError(true, err_code)
         })
     }
 
@@ -63,29 +67,45 @@ class ProjectTable extends Component{
 
 class Projects extends Component {
 
+    constructor(props){
+        super(props)
+        this.state={
+            loadError:false,
+            error_code:''
+        }
+    }
+
+    setLoadError = (val, err_code)=>{
+        this.setState({loadError:val, error_code: err_code})
+    }
+
     componentDidMount(){
         authenticate()
     }
     render() {
 
         return(
-            <Container>
-                <Menu borderless className='projectMenu' >
-                    <Menu.Item>
-                        <Breadcrumb size='large'>
-                            <Breadcrumb.Section as = {Link} to='/projects'>Projects</Breadcrumb.Section>
-                        </Breadcrumb>                        
-                    </Menu.Item>
-                    <Menu.Menu position = 'right'>
-                        <Menu.Item
-                                content='Create Project' 
-                                icon='add' 
-                                onClick = {() => {this.props.history.push('/newproject')}}
-                            />
-                    </Menu.Menu>
-                </Menu>
-                <ProjectTable/>
-            </Container>
+            <Fragment>
+                {this.state.loadError? <Error err_code = {this.state.error_code}/>:
+                    <Container>
+                        <Menu borderless className='projectMenu' >
+                            <Menu.Item>
+                                <Breadcrumb size='large'>
+                                    <Breadcrumb.Section as = {Link} to='/projects'>Projects</Breadcrumb.Section>
+                                </Breadcrumb>                        
+                            </Menu.Item>
+                            <Menu.Menu position = 'right'>
+                                <Menu.Item
+                                        content='Create Project' 
+                                        icon='add' 
+                                        onClick = {() => {this.props.history.push('/newproject')}}
+                                    />
+                            </Menu.Menu>
+                        </Menu>
+                        <ProjectTable setLoadError = {this.setLoadError}/>
+                    </Container>
+                }
+            </Fragment>
         )
     }
 }
