@@ -18,11 +18,6 @@ class MyPage extends Component {
         return (
             <Container>
                 <Container textAlign = 'center' className = 'myPageHead'>
-                    {/* <Image 
-                        src = {require('../images/user.svg')} 
-                        size = 'small'
-                        centered
-                    /> */}
                     <Avatar color={Avatar.getRandomColor('sitebase', ['red', 'green', 'blue'])} size = "120" round name = {user? user.name :""}/>
                     <Header as = 'h3'>{user?user.name : ''}</Header>
                 </Container>

@@ -1,11 +1,12 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
 
 import authenticate from '../authenticate'
 import {GET_USER_URL} from '../Const'
-import { Container, Table, Dropdown, Menu, Breadcrumb } from 'semantic-ui-react'
+import { Container, Table, Dropdown, Menu, Breadcrumb, Loader} from 'semantic-ui-react'
 import { Redirect, Link } from 'react-router-dom'
+import Error from './error'
 
 class AdminPanel extends Component {
 
@@ -14,7 +15,10 @@ class AdminPanel extends Component {
     constructor(props){
         super(props)
         this.state = {
-            users:[]
+            users:[],
+            isLoading: true,
+            loadError: false,
+            error_code: '',
         }
     }
 
@@ -30,12 +34,18 @@ class AdminPanel extends Component {
         .then(response => {
             if(this._is_mounted){
                 this.setState({
-                    users : response.data 
+                    users : response.data ,
+                    isLoading: false,
+                    loadError:false
                 })
             }
         })
         .catch(err => {
-            console.log(err)
+            const err_code = err.response? err.response.status: ''
+            this.setState({
+                loadError:true,
+                isLoading:false, 
+                error_code: err_code})
         })
 
     }
@@ -54,10 +64,13 @@ class AdminPanel extends Component {
             let data = JSON.stringify({is_active:value})
             axios.patch(GET_USER_URL+user+'/', data, {headers : {'Content-Type':'application/json'}})
             .then(response => {
-                console.log(response.data)
             })
             .catch(err =>{
-                console.log(err)
+                const err_code = err.response? err.response.status: ''
+                this.setState({
+                    loadError:true,
+                    isLoading:false, 
+                    error_code: err_code})
             })
         }
     }
@@ -67,10 +80,13 @@ class AdminPanel extends Component {
         let data = JSON.stringify({is_superuser:value})
         axios.patch(GET_USER_URL+user+'/', data, {headers : {'Content-Type':'application/json'}})
         .then(response => {
-            console.log(response.data)
         })
         .catch(err =>{
-            console.log(err)
+            const err_code = err.response? err.response.status: ''
+            this.setState({
+                loadError:true,
+                isLoading:false, 
+                error_code: err_code})
         })
     }
 
@@ -108,28 +124,36 @@ class AdminPanel extends Component {
             }
         }
 
+        const loading = this.state.isLoading
+        const loadError = this.state.loadError
+
         return (
-            <Container>
-                <Menu borderless className='projectMenu' >
-                    <Menu.Item>
-                        <Breadcrumb size='large'>
-                            <Breadcrumb.Section >Users</Breadcrumb.Section>
-                        </Breadcrumb>                        
-                    </Menu.Item>
-                </Menu>
-                <Table padded>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell>User</Table.HeaderCell>
-                            <Table.HeaderCell>Status</Table.HeaderCell>
-                            <Table.HeaderCell>Role</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {table}
-                    </Table.Body>
-                </Table>  
-            </Container>
+            <Fragment>
+                {loading?<Loader active size='large'>Loading</Loader>:
+                    loadError?<Error err_code = {this.state.error_code}/>:
+                    <Container>
+                        <Menu borderless className='projectMenu' >
+                            <Menu.Item>
+                                <Breadcrumb size='large'>
+                                    <Breadcrumb.Section >Users</Breadcrumb.Section>
+                                </Breadcrumb>                        
+                            </Menu.Item>
+                        </Menu>
+                        <Table padded>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell>User</Table.HeaderCell>
+                                    <Table.HeaderCell>Status</Table.HeaderCell>
+                                    <Table.HeaderCell>Role</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {table}
+                            </Table.Body>
+                        </Table>  
+                    </Container>
+                }
+            </Fragment>
         )
     }
 }

@@ -9,6 +9,7 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { ALL_PROJECTS_URL, LOGIN_HOME_URL, GET_USER_URL, PROJECT_MEDIA_URL } from '../Const'
 import authenticate from '../authenticate'
 import '../css/projects.css'
+import Error from './error'
 
 class UploadedImages extends Component{
     constructor(props){
@@ -38,12 +39,13 @@ class UploadedImages extends Component{
                 this.setState({
                     media: [...this.state.media.slice(0,index),...this.state.media.slice(index+1)]
                 })
+                this.props.setLoadError(false, '')
             }
         })
         .catch(err => {
-            console.log(err)
+            const err_code = err.response? err.response.status: ''
+            this.props.setLoadError(true, err_code)
         })
-
     }
 
     render(){
@@ -91,6 +93,7 @@ class EditProject extends Component {
                 },
             isLoading: true,
             loadError: false,
+            error_code: '',
             showDelete : false,
             userList: [],
             wiki: [],
@@ -98,6 +101,10 @@ class EditProject extends Component {
             media_upload : [],
             team_member : []
         }
+    }
+
+    setLoadError = (val, err_code)=>{
+        this.setState({loadError:val, error_code: err_code})
     }
 
     componentDidMount(){
@@ -112,6 +119,7 @@ class EditProject extends Component {
             if(response.status === 200 && response.data.id){
                 this.setState({projectDetail:response.data,
                     isLoading:false,
+                    loadError: false,
                     wiki : response.data.wiki,
                     team_member : response.data.team_member,
                     media: response.data.project_media
@@ -125,12 +133,28 @@ class EditProject extends Component {
             if(err.response && err.response.status === 401){
                 window.location.href = LOGIN_HOME_URL
             }
-            this.setState({loadError:true,isLoading:false })
+            const err_code = err.response? err.response.status: ''
+            this.setState({
+                loadError:true,
+                error_code: err_code,
+                isLoading:false 
+            })
         })
 
         axios.get(GET_USER_URL)
         .then(response => {
             this.setState({userList: response.data})
+        })
+        .catch(err =>{
+            if(err.response && err.response.status === 401){
+                window.location.href = LOGIN_HOME_URL
+            }
+            const err_code = err.response? err.response.status: ''
+            this.setState({
+                loadError:true,
+                error_code: err_code,
+                isLoading:false 
+            })
         })
     }
 
@@ -143,13 +167,21 @@ class EditProject extends Component {
     }
 
     handleConfirm = () => {
-        this.setState({showDelete:false})
+        this.setState({
+            showDelete:false,
+            isLoading: true
+        })
         axios.delete(ALL_PROJECTS_URL+this.state.projectDetail.id)
         .then(response => {
             window.location.href = '/projects'
         })
         .catch(err =>{
-            console.log(err)
+            const err_code = err.response? err.response.status: ''
+            this.setState({
+                loadError:true,
+                error_code: err_code,
+                isLoading:false 
+            })
         })
     }
 
@@ -189,6 +221,10 @@ class EditProject extends Component {
                 this.state.media_upload[i]
             )
         }
+
+        this.setState({
+            isLoading:true
+        })
         
 
         axios.patch('http://localhost:8000/tracker/project/'+this.state.projectDetail.id+'/', formData )
@@ -196,7 +232,12 @@ class EditProject extends Component {
             this.props.history.push('/projects/'+res.data.id)
         })
         .catch(err =>{
-            console.log(err)
+            const err_code = err.response? err.response.status: ''
+            this.setState({
+                loadError:true,
+                error_code: err_code,
+                isLoading:false 
+            })
         })
         
     }
@@ -242,7 +283,7 @@ class EditProject extends Component {
                         className = 'input_small'
                         />
                 </Form.Field>
-                <UploadedImages media = {this.state.media}/>
+                <UploadedImages media = {this.state.media} setLoadError = {this.setLoadError}/>
                 <Form.Dropdown
                     name = 'team_member'
                     label = 'Add team members:'
@@ -299,15 +340,15 @@ class EditProject extends Component {
         const loadError = this.state.loadError
 
         return(
-            <Container>
+            <Fragment>
                 {loading?<Loader active size='large'>Loading</Loader>:
-                (loadError)?'Someting went wrong':
-                    <Fragment>
+                (loadError)?<Error err_code = {this.state.error_code}/>:
+                    <Container>
                         {head}
                         {form}
-                    </Fragment> 
+                    </Container> 
                 }
-            </Container>
+            </Fragment>
         )
     }
 }

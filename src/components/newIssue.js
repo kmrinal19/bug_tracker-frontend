@@ -9,6 +9,7 @@ import { withRouter } from "react-router";
 import {Link} from 'react-router-dom'
 import {TAG_URL} from '../Const'
 import '../css/newIssue.css'
+import Error from './error'
 
 class NewIssue extends Component {
     constructor(props){
@@ -24,6 +25,7 @@ class NewIssue extends Component {
             tagList:[],
             loadError:false,
             isLoading:true,
+            error_code: '',
         }
     }
     componentDidMount(){
@@ -37,12 +39,17 @@ class NewIssue extends Component {
         .then(response =>{
             if(response.status === 200 && response.data.name){
                 this.setState({project_name:response.data.name,
-                    isLoading:false
+                    isLoading:false,
+                    loadError : false
                 })
             }
         })
         .catch(err =>{
-            this.setState({loadError:true})
+            const err_code = err.response? err.response.status: ''
+            this.setState({
+                loadError:true,
+                isLoading:false, 
+                error_code: err_code})
         })
 
         axios.get(TAG_URL)
@@ -50,6 +57,13 @@ class NewIssue extends Component {
             if(response.status === 200){
                 this.setState({tagList: response.data})
             }
+        })
+        .catch(err =>{
+            const err_code = err.response? err.response.status: ''
+            this.setState({
+                loadError:true,
+                isLoading:false, 
+                error_code: err_code})
         })
     }
     
@@ -119,7 +133,11 @@ class NewIssue extends Component {
             this.props.history.push('/issue/'+res.data.id)
         })
         .catch(err =>{
-            console.log(err)
+            const err_code = err.response? err.response.status: ''
+            this.setState({
+                loadError:true,
+                isLoading:false, 
+                error_code: err_code})
         })
         
     }
@@ -130,7 +148,7 @@ class NewIssue extends Component {
             {
                 key:'0',
                 text:'Bug',
-                value:'Bug'
+                value:'bug'
             },
             {
                 key:'1',
@@ -212,12 +230,13 @@ class NewIssue extends Component {
         )
 
         const loading = this.state.isLoading
+        const loadError = this.state.loadError
 
         return (
             <Fragment>
                 {loading? <Loader active size='large'>Loading</Loader>:
-                    (this.state.loadError)?
-                        <Container>Something went wrong</Container>
+                    (loadError)?
+                        <Error err_code = {this.state.error_code}/>
                         :
                         <Container>
                             {head}

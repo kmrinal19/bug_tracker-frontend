@@ -1,7 +1,7 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import axios from 'axios'
 import authenticate from '../authenticate'
-import { Header, Form, Container, Menu, Breadcrumb } from 'semantic-ui-react'
+import { Header, Form, Container, Menu, Breadcrumb, Loader } from 'semantic-ui-react'
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { connect } from 'react-redux'
@@ -9,6 +9,7 @@ import { withRouter } from "react-router";
 import { Link } from 'react-router-dom'
 import {GET_USER_URL} from '../Const'
 import '../css/newProject.css'
+import Error from './error'
 
 class NewProject extends Component {
     constructor(props){
@@ -18,14 +19,28 @@ class NewProject extends Component {
             wiki : '',
             media : [],
             team_member : [],
-            userList: []
+            userList: [],
+            isLoading: true,
+            loadError: false,
+            error_code: ''
         }
     }
     componentDidMount(){
         authenticate()
         axios.get(GET_USER_URL)
         .then(response => {
-            this.setState({userList: response.data})
+            this.setState({userList: response.data,
+                isLoading: false,
+                loadError: false,
+            })
+        })
+        .catch(err =>{
+            const err_code = err.response? err.response.status: ''
+            this.setState({
+                isLoading:false,
+                loadError:true,
+                error_code: err_code
+            })
         })
     }
 
@@ -75,13 +90,19 @@ class NewProject extends Component {
             )
         }
         
+        this.setState({isLoading: true})
 
         axios.post('http://localhost:8000/tracker/project/', formData )
         .then(res => {
             this.props.history.push('/projects/'+res.data.id)
         })
         .catch(err =>{
-            console.log(err)
+            const err_code = err.response? err.response.status: ''
+            this.setState({
+                isLoading: false,
+                loadError: true,
+                error_code: err_code
+            })
         })
         
     }
@@ -149,20 +170,28 @@ class NewProject extends Component {
 
         )
 
+        const loading = this.state.isLoading
+        const loadError = this.state.loadError
+
         return (
-            <Container>
-                <Menu borderless className='projectMenu' >
-                    <Menu.Item>
-                        <Breadcrumb size='large'>
-                            <Breadcrumb.Section as = {Link} to='/projects'>Projects</Breadcrumb.Section>
-                            <Breadcrumb.Divider icon='right arrow' />
-                            <Breadcrumb.Section>New Project</Breadcrumb.Section>
-                        </Breadcrumb>                        
-                    </Menu.Item>
-                </Menu>
-                <Header as = 'h2'>Create a new Project</Header>
-                {form}
-            </Container>
+            <Fragment>
+                {loading?<Loader active size='large'>Loading</Loader>:
+                (loadError)?<Error err_code = {this.state.error_code}/>:
+                    <Container>
+                        <Menu borderless className='projectMenu' >
+                            <Menu.Item>
+                                <Breadcrumb size='large'>
+                                    <Breadcrumb.Section as = {Link} to='/projects'>Projects</Breadcrumb.Section>
+                                    <Breadcrumb.Divider icon='right arrow' />
+                                    <Breadcrumb.Section>New Project</Breadcrumb.Section>
+                                </Breadcrumb>                        
+                            </Menu.Item>
+                        </Menu>
+                        <Header as = 'h2'>Create a new Project</Header>
+                        {form}
+                    </Container>
+                }
+            </Fragment>
         )
     }
 }

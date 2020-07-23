@@ -10,6 +10,7 @@ import authenticate from '../authenticate'
 import { ISSUE_URL, LOGIN_HOME_URL, GET_USER_URL, ALL_PROJECTS_URL, TAG_URL } from '../Const'
 import '../css/projects.css'
 import '../css/issueDetail.css'
+import Error from './error'
 
 class UpdateAssign extends Component{
     constructor(props){
@@ -26,6 +27,11 @@ class UpdateAssign extends Component{
         axios.get(GET_USER_URL)
         .then(response => {
             this.setState({userList: response.data})
+            this.props.setLoadError(false, '')
+        })
+        .catch(err =>{
+            const err_code = err.response? err.response.status: ''
+            this.props.setLoadError(true, err_code)
         })
         this.setState({assigned_to_name : this.props.issueDetail.assigned_to_name, 
             update_assign : this.props.issueDetail.assigned_to})
@@ -50,9 +56,11 @@ class UpdateAssign extends Component{
         axios.patch(ISSUE_URL+this.props.issueDetail.id+'/',data, {headers : {'Content-Type':'application/json'}})
         .then(response => {
             this.setState({assigned_to_name:response.data.assigned_to_name})
+            this.props.setLoadError(false, '')
         })
         .catch(err => {
-            console.log(err)
+            const err_code = err.response? err.response.status: ''
+            this.props.setLoadError(true, err_code)
         })
     }
 
@@ -141,6 +149,11 @@ class UpdateTags extends Component{
         axios.get(TAG_URL)
         .then(response => {
             this.setState({tagList: response.data})
+            this.props.setLoadError(false, '')
+        })
+        .catch(err =>{
+            const err_code = err.response? err.response.status: ''
+            this.props.setLoadError(true, err_code)
         })
         this.setState({tag_names : this.props.issueDetail.tag_name, 
             update_tags : this.props.issueDetail.tag})
@@ -165,9 +178,11 @@ class UpdateTags extends Component{
         axios.patch(ISSUE_URL+this.props.issueDetail.id+'/',data, {headers : {'Content-Type':'application/json'}})
         .then(response => {
             this.setState({tag_names:response.data.tag_name})
+            this.props.setLoadError(false, '')
         })
         .catch(err => {
-            console.log(err)
+            const err_code = err.response? err.response.status: ''
+            this.props.setLoadError(true, err_code)
         })
     }
 
@@ -249,11 +264,17 @@ class IssueDetails extends Component {
             issueDetail : {issueComments:[], assigned_to_name:[], tag_name:[], issue_media : []},
             comments : [],
             isLoading: true,
+            loadError: false,
+            error_code: '',
             comment:'',
             ws : null,
             showDelete: false,
             projectDetail : {},
         }
+    }
+
+    setLoadError = (val, err_code)=>{
+        this.setState({loadError:val, error_code: err_code})
     }
 
     componentDidMount(){
@@ -299,7 +320,11 @@ class IssueDetails extends Component {
             if(err.response && err.response.status === 401){
                 window.location.href = LOGIN_HOME_URL
             }
-            this.setState({loadError:true,isLoading:false })
+            const err_code = err.response? err.response.status: ''
+            this.setState({
+                loadError:true,
+                isLoading:false, 
+                error_code: err_code})
         })
 
     }
@@ -320,18 +345,28 @@ class IssueDetails extends Component {
     }
 
     handleStatusChange = (event, {value}) => {
+        this.setState({isLoading: true})
         let data = JSON.stringify({status:value})
         axios.patch(ISSUE_URL+this.state.issueDetail.id+'/', data, {headers : {'Content-Type':'application/json'}})
         .catch(err => {
-            console.log(err)
+            const err_code = err.response? err.response.status: ''
+            this.setState({
+                loadError:true,
+                isLoading:false, 
+                error_code: err_code})
         })
     }
 
     handleTypeChange = (event, {value}) => {
+        this.setState({isLoading: true})
         let data = JSON.stringify({issue_type:value})
         axios.patch(ISSUE_URL+this.state.issueDetail.id+'/', data, {headers : {'Content-Type':'application/json'}})
         .catch(err => {
-            console.log(err)
+            const err_code = err.response? err.response.status: ''
+            this.setState({
+                loadError:true,
+                isLoading:false, 
+                error_code: err_code})
         })
     }
 
@@ -344,13 +379,18 @@ class IssueDetails extends Component {
     }
 
     handleConfirm = () => {
+        this.setState({isLoading: true})
         this.setState({showDelete:false})
         axios.delete(ISSUE_URL+this.state.issueDetail.id+'/')
         .then(response => {
             window.location.href = '/projects/'+this.state.issueDetail.project
         })
         .catch(err =>{
-            console.log(err)
+            const err_code = err.response? err.response.status: ''
+            this.setState({
+                loadError:true,
+                isLoading:false, 
+                error_code: err_code})
         })
     }
 
@@ -482,9 +522,9 @@ class IssueDetails extends Component {
         const loadError = this.state.loadError
 
         return(
-            <div>
+            <Fragment>
                 {loading?<Loader active size='large'>Loading</Loader>:
-                    loadError?'Someting went wrong':
+                    loadError?<Error err_code = {this.state.error_code}/>:
                         <Container>
                             {head}
                             <Grid columns = 'two'>
@@ -504,18 +544,26 @@ class IssueDetails extends Component {
                                 <Grid.Column width = {4}>
                                     <div>
                                         <p><strong>Assigned to:</strong></p>
-                                        <UpdateAssign user = {this.props.user? this.props.user.user :''} projectDetail = {this.state.projectDetail} issueDetail = {this.state.issueDetail}/>
+                                        <UpdateAssign 
+                                            user = {this.props.user? this.props.user.user :''} 
+                                            projectDetail = {this.state.projectDetail} 
+                                            issueDetail = {this.state.issueDetail} 
+                                            setLoadError = {this.setLoadError}/>
                                     </div>
                                     <div>
                                         <p><strong>Tags:</strong></p>
-                                        <UpdateTags user = {this.props.user? this.props.user.user :''} projectDetail = {this.state.projectDetail} issueDetail = {this.state.issueDetail}/>
+                                        <UpdateTags 
+                                            user = {this.props.user? this.props.user.user :''} 
+                                            projectDetail = {this.state.projectDetail} 
+                                            issueDetail = {this.state.issueDetail}
+                                            setLoadError = {this.setLoadError}/>
                                     </div>
                                 </Grid.Column>
                             </Grid>
 
                         </Container>
                 }
-            </div>
+            </Fragment>
         )
     }
 }
