@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
 import { Container, Header, Divider, List, Menu, Breadcrumb, Loader } from 'semantic-ui-react'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import Avatar from 'react-avatar'
 
 import {GET_USER_URL} from '../Const'
@@ -47,6 +47,14 @@ class UserInfo extends Component {
 
         const loading = this.state.isLoading
         const loadError = this.state.loadError
+
+        if(this.props.user.user){
+            if(this.props.user.user.is_superuser === false){
+                return(
+                    <Redirect to = '/projects'/> 
+                )
+            }
+        }
 
         return (
             <Fragment>

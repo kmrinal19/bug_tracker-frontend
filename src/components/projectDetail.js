@@ -189,7 +189,8 @@ class ProjectDetail extends Component {
         this.state={
             projectDetail : {
                     projectIssues:[],
-                    project_media: []
+                    project_media: [],
+                    team_member : [],
                 },
             isLoading: true,
             loadError: false,
@@ -256,8 +257,9 @@ class ProjectDetail extends Component {
                     </Menu.Item>
                 </Menu>
                 <Header as = 'h2'>{this.state.projectDetail.name}</Header>
-                {/* currently only project creator is allowed to edit */}
-                {this.props.user.user? (this.props.user.user.id === this.state.projectDetail.created_by ? (
+                {/* Only project creator, admin and team_members are allowed to edit */}
+                {this.props.user.user? ((this.props.user.user.id === this.state.projectDetail.created_by) || 
+                (this.props.user.user.is_superuser) || (this.state.projectDetail.team_member.includes(this.props.user.user.id)) ? (
                     <Fragment>
                         <Icon name = 'edit'/>
                         <Link to = {'/projects/'+this.state.projectDetail.id+'/editProject'}> Edit Project</Link>

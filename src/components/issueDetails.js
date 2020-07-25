@@ -80,9 +80,9 @@ class UpdateAssign extends Component{
         defaultVal = this.state.update_assign
 
         let is_team_or_admin = false
-        // currently only checking for team_member
+        // checking for team_member or admin
         if(this.props.projectDetail.id){
-            is_team_or_admin = this.props.projectDetail.team_member.includes(this.props.user.id)
+            is_team_or_admin = (this.props.projectDetail.team_member.includes(this.props.user.id)) || (this.props.user.is_superuser)
         }
 
         return(
@@ -114,7 +114,7 @@ class UpdateAssign extends Component{
                                     >
 
                                     </Form.Dropdown>
-                                    <Form.Button>Update</Form.Button>
+                                    <Form.Button positive className='positive_btn'>Update</Form.Button>
                                 </Form>
                                 <Divider/>
                             </Fragment>
@@ -202,9 +202,9 @@ class UpdateTags extends Component{
         defaultVal = this.state.update_tags
 
         let is_team_or_admin_or_reporter = false
-        // currently only checking for team_member or issue reporter
+        // checking for team_member or issue reporter or admin
         if(this.props.projectDetail.id){
-            is_team_or_admin_or_reporter = this.props.projectDetail.team_member.includes(this.props.user.id) || this.props.issueDetail.created_by === this.props.user.id
+            is_team_or_admin_or_reporter = (this.props.projectDetail.team_member.includes(this.props.user.id)) || (this.props.issueDetail.created_by === this.props.user.id) || (this.props.user.is_superuser)
         }
 
         return(
@@ -236,7 +236,7 @@ class UpdateTags extends Component{
                                     >
 
                                     </Form.Dropdown>
-                                    <Form.Button>Update</Form.Button>
+                                    <Form.Button positive className='positive_btn'>Update</Form.Button>
                                 </Form>
                                 <Divider/>
                             </Fragment>
@@ -348,6 +348,12 @@ class IssueDetails extends Component {
         this.setState({isLoading: true})
         let data = JSON.stringify({status:value})
         axios.patch(ISSUE_URL+this.state.issueDetail.id+'/', data, {headers : {'Content-Type':'application/json'}})
+        .then(
+            this.setState({
+                isLoading: false,
+                loadError: false
+            })
+        )
         .catch(err => {
             const err_code = err.response? err.response.status: ''
             this.setState({
@@ -361,6 +367,12 @@ class IssueDetails extends Component {
         this.setState({isLoading: true})
         let data = JSON.stringify({issue_type:value})
         axios.patch(ISSUE_URL+this.state.issueDetail.id+'/', data, {headers : {'Content-Type':'application/json'}})
+        .then(
+            this.setState({
+                isLoading: false,
+                loadError: false
+            })
+        )
         .catch(err => {
             const err_code = err.response? err.response.status: ''
             this.setState({
@@ -414,7 +426,7 @@ class IssueDetails extends Component {
         ))
 
         let is_team_or_admin_or_reporter = false
-        // currently only checking for team_member or issue reporter or admin
+        // checking for team_member or issue reporter or admin
         if(this.state.projectDetail.id && this.props.user.user){
             is_team_or_admin_or_reporter = this.state.projectDetail.team_member.includes(this.props.user.user.id) || this.state.issueDetail.created_by === this.props.user.user.id || this.props.user.user.is_superuser
         }
@@ -452,7 +464,7 @@ class IssueDetails extends Component {
                 {/* currently only issue creator is allowed to edit */}
                 <Header as = 'h2'>Issue: {this.state.issueDetail.heading}</Header>
                 <br/>
-                {this.props.user.user? (this.props.user.user.id === this.state.issueDetail.created_by ? (
+                {is_team_or_admin_or_reporter ? (
                     <Fragment>
                         <Icon name = 'trash'/>
                         <span onClick = {this.showDelete} className = 'spanPointer'> Delete Issue</span>
@@ -466,8 +478,7 @@ class IssueDetails extends Component {
                             onConfirm = {this.handleConfirm}
                         />
                     </Fragment>
-                    ) : '')
-                    : ''
+                    ) : ''
                 }
                 <strong>Issue type: </strong>
                 <span>
@@ -545,7 +556,7 @@ class IssueDetails extends Component {
                                             name='comment' 
                                             onChange={this.handleChange} 
                                             value = {this.state.comment}/>
-                                        <Form.Button as = {Button} className = 'posistive_button' positive>Add comment</Form.Button>
+                                        <Form.Button className = 'posistive_button' positive>Add comment</Form.Button>
                                     </Form>
                                 </Grid.Column>
                                 <Grid.Column width = {4}>

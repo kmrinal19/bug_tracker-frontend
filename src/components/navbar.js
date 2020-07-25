@@ -106,7 +106,6 @@ class Navbar extends Component {
                                 item
                                 trigger = {(
                                     <span>
-                                        {/* <Image avatar src = {require('../images/user_inverted.svg')}/> */}
                                         <Avatar color={Avatar.getRandomColor('sitebase', ['red', 'green', 'blue'])} size = "40" round name = {this.props.user.user.name}/>
                                         
                                     </span>
