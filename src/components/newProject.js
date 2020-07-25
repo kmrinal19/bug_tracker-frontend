@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import axios from 'axios'
 import authenticate from '../authenticate'
-import { Header, Form, Container, Menu, Breadcrumb, Loader } from 'semantic-ui-react'
+import { Header, Form, Container, Menu, Breadcrumb, Loader, Message } from 'semantic-ui-react'
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { connect } from 'react-redux'
@@ -22,7 +22,8 @@ class NewProject extends Component {
             userList: [],
             isLoading: true,
             loadError: false,
-            error_code: ''
+            error_code: '',
+            name_error : false, 
         }
     }
     componentDidMount(){
@@ -64,46 +65,52 @@ class NewProject extends Component {
         
         event.preventDefault()
 
-        let formData = new FormData()
-
-        formData.append(
-            'name',
-            this.state.name
-        )
-
-        formData.append(
-            'wiki',
-            this.state.wiki
-        )
-
-        for(let i = 0; i < (this.state.team_member).length; i++){
-            formData.append(
-                'team_member',
-                this.state.team_member[i]
-            )
+        if(this.state.name === "" || this.state.name.length > 50){
+            this.setState({name_error:true})
         }
 
-        for(let i = 0; i < (this.state.media).length; i++){
-            formData.append(
-                'media'+i,
-                this.state.media[i]
-            )
-        }
-        
-        this.setState({isLoading: true})
+        else{
+            let formData = new FormData()
 
-        axios.post('http://localhost:8000/tracker/project/', formData )
-        .then(res => {
-            this.props.history.push('/projects/'+res.data.id)
-        })
-        .catch(err =>{
-            const err_code = err.response? err.response.status: ''
-            this.setState({
-                isLoading: false,
-                loadError: true,
-                error_code: err_code
+            formData.append(
+                'name',
+                this.state.name
+            )
+
+            formData.append(
+                'wiki',
+                this.state.wiki
+            )
+
+            for(let i = 0; i < (this.state.team_member).length; i++){
+                formData.append(
+                    'team_member',
+                    this.state.team_member[i]
+                )
+            }
+
+            for(let i = 0; i < (this.state.media).length; i++){
+                formData.append(
+                    'media'+i,
+                    this.state.media[i]
+                )
+            }
+            
+            this.setState({isLoading: true})
+
+            axios.post('http://localhost:8000/tracker/project/', formData )
+            .then(res => {
+                this.props.history.push('/projects/'+res.data.id)
             })
-        })
+            .catch(err =>{
+                const err_code = err.response? err.response.status: ''
+                this.setState({
+                    isLoading: false,
+                    loadError: true,
+                    error_code: err_code
+                })
+            })
+        }
         
     }
 
@@ -189,6 +196,10 @@ class NewProject extends Component {
                         </Menu>
                         <Header as = 'h2'>Create a new Project</Header>
                         {form}
+                        <Message 
+                            negative 
+                            content = "Please enter a valid name for your project" 
+                            hidden = {!this.state.name_error}/>
                     </Container>
                 }
             </Fragment>

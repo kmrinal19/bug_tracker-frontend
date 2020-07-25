@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import axios from 'axios'
 import authenticate from '../authenticate'
-import { Header, Form, Dropdown, Container, Menu, Breadcrumb, Loader } from 'semantic-ui-react'
+import { Header, Form, Dropdown, Container, Menu, Breadcrumb, Loader, Message } from 'semantic-ui-react'
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { connect } from 'react-redux'
@@ -26,6 +26,7 @@ class NewIssue extends Component {
             loadError:false,
             isLoading:true,
             error_code: '',
+            heading_error: false,
         }
     }
     componentDidMount(){
@@ -91,54 +92,60 @@ class NewIssue extends Component {
         
         event.preventDefault()
 
-        let formData = new FormData()
-
-        formData.append(
-            'heading',
-            this.state.heading
-        )
-
-        formData.append(
-            'issue_type',
-            this.state.issue_type
-        )
-
-        formData.append(
-            'description',
-            this.state.description
-        )
-
-        formData.append(
-            'project',
-            this.state.project
-        )
-
-        for(let i = 0; i < (this.state.media).length; i++){
-            formData.append(
-                'media'+i,
-                this.state.media[i]
-            )
+        if(this.state.heading === ""){
+            this.setState({heading_error:true})
         }
 
-        for(let i = 0; i < (this.state.tag).length; i++){
+        else{
+            let formData = new FormData()
+
             formData.append(
-                'tag',
-                this.state.tag[i]
+                'heading',
+                this.state.heading
             )
+
+            formData.append(
+                'issue_type',
+                this.state.issue_type
+            )
+
+            formData.append(
+                'description',
+                this.state.description
+            )
+
+            formData.append(
+                'project',
+                this.state.project
+            )
+
+            for(let i = 0; i < (this.state.media).length; i++){
+                formData.append(
+                    'media'+i,
+                    this.state.media[i]
+                )
+            }
+
+            for(let i = 0; i < (this.state.tag).length; i++){
+                formData.append(
+                    'tag',
+                    this.state.tag[i]
+                )
+            }
+            
+            this.setState({isLoading:true})
+            axios.post('http://localhost:8000/tracker/issue/', formData )
+            .then(res => {
+                this.props.history.push('/issue/'+res.data.id)
+            })
+            .catch(err =>{
+                const err_code = err.response? err.response.status: ''
+                this.setState({
+                    loadError:true,
+                    isLoading:false, 
+                    error_code: err_code})
+            })
         }
-        
-        this.setState({isLoading:true})
-        axios.post('http://localhost:8000/tracker/issue/', formData )
-        .then(res => {
-            this.props.history.push('/issue/'+res.data.id)
-        })
-        .catch(err =>{
-            const err_code = err.response? err.response.status: ''
-            this.setState({
-                loadError:true,
-                isLoading:false, 
-                error_code: err_code})
-        })
         
     }
 
@@ -244,6 +251,10 @@ class NewIssue extends Component {
                             <br/>
                             <Header as = 'h2'>Create a new Issue</Header>
                             {form}
+                            <Message 
+                                negative 
+                                content = "Please enter a valid heading for this issue" 
+                                hidden = {!this.state.heading_error}/>
                         </Container>
                 }
             </Fragment>
