@@ -438,7 +438,14 @@ class IssueDetails extends Component {
                             <Header as = 'h2'>Project: {this.state.issueDetail.project_name}</Header>
                         </Grid.Column>
                         <Grid.Column width = {3} textAlign = 'right' className = 'newIssueGrid'>
-                            <Button as = {Link} to = {this.state.issueDetail.project? '/projects/'+this.state.issueDetail.project+'/newissue': '/projects'}>Report Issue</Button>
+                            <Button 
+                                className = 'positive_btn'
+                                positive
+                                as = {Link} 
+                                to = {this.state.issueDetail.project? '/projects/'+this.state.issueDetail.project+'/newissue': '/projects'}
+                            >
+                                Report Issue
+                            </Button>
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
@@ -488,7 +495,7 @@ class IssueDetails extends Component {
                 <br/>
                 <span>{this.state.issueDetail.created_by_name} reported this issue on {(new Date(this.state.issueDetail.created_on)).toDateString()}</span>
                 <br/>
-                <Message>
+                <Message className = 'msg'>
                     <Message.Header>Description</Message.Header>
                     {this.state.issueDetail.description? parse(this.state.issueDetail.description):''}
                     {media}
@@ -538,7 +545,7 @@ class IssueDetails extends Component {
                                             name='comment' 
                                             onChange={this.handleChange} 
                                             value = {this.state.comment}/>
-                                        <Form.Button>Add comment</Form.Button>
+                                        <Form.Button as = {Button} className = 'posistive_button' positive>Add comment</Form.Button>
                                     </Form>
                                 </Grid.Column>
                                 <Grid.Column width = {4}>

@@ -50,9 +50,9 @@ class ProjectTable extends Component{
                 <Table padded>
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell>Project</Table.HeaderCell>
-                            <Table.HeaderCell>Created by</Table.HeaderCell>
-                            <Table.HeaderCell>Created on</Table.HeaderCell>
+                            <Table.HeaderCell className = 'table_header'>Project</Table.HeaderCell>
+                            <Table.HeaderCell className = 'table_header'>Created by</Table.HeaderCell>
+                            <Table.HeaderCell className = 'table_header'>Created on</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>

@@ -1,6 +1,9 @@
 .projectNameGrid{
     margin-top: 10px !important;
 }
+.positive_btn{
+    color: white !important;
+}
 @media only screen and (max-width: 767px){
     .newIssueGrid{
         text-align: left !important;

@@ -1,4 +1,8 @@
 .projectMenu{
     margin-top: 10px !important;
     border-bottom-color: #00acee !important;
+    background-color: #fafbfc!important;
+}
+.table_header{
+    background: #f1f8ff !important;;
 }

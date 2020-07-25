@@ -142,9 +142,9 @@ class AdminPanel extends Component {
                         <Table padded>
                             <Table.Header>
                                 <Table.Row>
-                                    <Table.HeaderCell>User</Table.HeaderCell>
-                                    <Table.HeaderCell>Status</Table.HeaderCell>
-                                    <Table.HeaderCell>Role</Table.HeaderCell>
+                                    <Table.HeaderCell className = 'table_header'>User</Table.HeaderCell>
+                                    <Table.HeaderCell className = 'table_header'>Status</Table.HeaderCell>
+                                    <Table.HeaderCell className = 'table_header'>Role</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>

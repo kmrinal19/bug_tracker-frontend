@@ -29,11 +29,11 @@ function IssueTable (props){
         <Table fixed padded>
             <Table.Header>
                 <Table.Row>
-                    <Table.HeaderCell>Issue</Table.HeaderCell>
-                    <Table.HeaderCell>Created by</Table.HeaderCell>
-                    <Table.HeaderCell>Created on</Table.HeaderCell>
-                    <Table.HeaderCell>Assigned to</Table.HeaderCell>
-                    <Table.HeaderCell>Status</Table.HeaderCell>
+                    <Table.HeaderCell className = 'table_header'>Issue</Table.HeaderCell>
+                    <Table.HeaderCell className = 'table_header'>Created by</Table.HeaderCell>
+                    <Table.HeaderCell className = 'table_header'>Created on</Table.HeaderCell>
+                    <Table.HeaderCell className = 'table_header'>Assigned to</Table.HeaderCell>
+                    <Table.HeaderCell className = 'table_header'>Status</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
             <Table.Body>
@@ -167,7 +167,7 @@ class Wiki extends Component{
                         <Button basic color='blue' size = 'small' onClick = {this.handleClick}>Show wiki</Button>
                     ):(
                         <Fragment>
-                            <Message>
+                            <Message className = 'msg'>
                                 <Message.Header>Wiki</Message.Header>
                                 {this.props.wiki? parse(this.props.wiki):''}
                                 {media}
