@@ -23,6 +23,7 @@ class NewIssue extends Component {
             project_name : '',
             tag:[],
             tagList:[],
+            tag_options:[],
             loadError:false,
             isLoading:true,
             error_code: '',
@@ -57,6 +58,13 @@ class NewIssue extends Component {
         .then(response =>{
             if(response.status === 200){
                 this.setState({tagList: response.data})
+                this.setState({
+                    tag_options: this.state.tagList.map((tag) =>({
+                        key: tag.id,
+                        text: tag.tag_name,
+                        value: tag.id
+                    }))
+                })
             }
         })
         .catch(err =>{
@@ -86,6 +94,32 @@ class NewIssue extends Component {
 
     handleTagChange = (event, {value}) => {
         this.setState({tag: value})
+    }
+
+    handleTagAdd = (event, {value}) => {
+        let formData = new FormData()
+        formData.append(
+            'tag_name',
+            value
+        )
+        axios.post(TAG_URL, formData)
+        .then(resonse =>{
+            this.setState({
+                tagList:[resonse.data, ...this.state.tagList]
+            })
+            if(this.state.tag.indexOf(resonse.data.tag_name) !== -1 ){
+                this.state.tag.splice(this.state.tag.indexOf(resonse.data.tag_name),1)
+            }
+        })
+        .then(() =>{
+            this.setState({
+                tag_options: this.state.tagList.map((tag) =>({
+                    key: tag.id,
+                    text: tag.tag_name,
+                    value: tag.id
+                }))
+            })
+        })
     }
 
     handleSubmit = (event) => {
@@ -164,15 +198,6 @@ class NewIssue extends Component {
             }
         ]
 
-        var tags = []
-        if(this.state.tagList[0]){
-            tags = this.state.tagList.map(tag => ({
-                key : tag.id,
-                text : tag.tag_name,
-                value : tag.id
-            }))
-        }
-
         const head = (
             <Menu borderless className='projectMenu' >
                 <Menu.Item>
@@ -227,9 +252,11 @@ class NewIssue extends Component {
                     multiple
                     search
                     selection
-                    options={tags}
+                    options={this.state.tag_options}
+                    allowAdditions
                     className = 'input_small'
                     onChange = {this.handleTagChange}
+                    onAddItem = {this.handleTagAdd}
                 />
                 <Form.Button>Create now</Form.Button>
             </Form>

@@ -23,3 +23,6 @@ code {
 .msg{
   background: #fff !important;
 }
+.label{
+  margin: 3px !important;
+}

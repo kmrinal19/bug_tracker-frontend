@@ -142,6 +142,7 @@ class UpdateTags extends Component{
             showEdit : false,
             tag_names : [],
             update_tags: [],
+            options: [],
         }
     }
 
@@ -149,6 +150,13 @@ class UpdateTags extends Component{
         axios.get(TAG_URL)
         .then(response => {
             this.setState({tagList: response.data})
+            this.setState({
+                options: this.state.tagList.map((tag) =>({
+                    key: tag.id,
+                    text: tag.tag_name,
+                    value: tag.id
+                }))
+            })
             this.props.setLoadError(false, '')
         })
         .catch(err =>{
@@ -159,8 +167,34 @@ class UpdateTags extends Component{
             update_tags : this.props.issueDetail.tag})
     }
 
-    handleAssignChange = (event, {value}) => {
+    handleTagChange = (event, {value}) => {
         this.setState({update_tags: value})
+    }
+
+    handleTagAdd = (event, {value}) => {
+        let formData = new FormData()
+        formData.append(
+            'tag_name',
+            value
+        )
+        axios.post(TAG_URL, formData)
+        .then(resonse =>{
+            this.setState({
+                tagList:[resonse.data, ...this.state.tagList],
+            })
+            if(this.state.update_tags.indexOf(resonse.data.tag_name) !== -1 ){
+                this.state.update_tags.splice(this.state.update_tags.indexOf(resonse.data.tag_name),1)
+            }
+        })
+        .then(() =>{
+            this.setState({
+                options: this.state.tagList.map((tag) =>({
+                    key: tag.id,
+                    text: tag.tag_name,
+                    value: tag.id
+                }))
+            })
+        })
     }
 
     toggleEdit = () => {
@@ -188,16 +222,7 @@ class UpdateTags extends Component{
 
     render(){
 
-        var options = []
         var defaultVal = []
-
-        if(this.state.tagList[0]){
-            options = this.state.tagList.map((tag) =>({
-                key: tag.id,
-                text: tag.tag_name,
-                value: tag.id
-            }))
-        }
 
         defaultVal = this.state.update_tags
 
@@ -229,10 +254,12 @@ class UpdateTags extends Component{
                                         multiple
                                         search
                                         selection
-                                        options={options}
+                                        options={this.state.options}
+                                        allowAdditions
                                         className = 'input_small'
                                         defaultValue = {defaultVal}
-                                        onChange={this.handleAssignChange}
+                                        onChange={this.handleTagChange}
+                                        onAddItem = {this.handleTagAdd}
                                     >
 
                                     </Form.Dropdown>

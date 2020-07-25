@@ -16,11 +16,11 @@ function IssueTable (props){
         <Table.Row key = {issue.id}>
             <Table.Cell>
                 <Link to = {'/issue/'+issue.id}>{issue.heading}</Link>&nbsp;
-                {issue.tag_name.map(tag =>(<Label color = 'teal' horizontal  key = {tag}>{tag}</Label>))}
+                {issue.tag_name.map(tag =>(<Label className = 'label' color = 'teal' horizontal  key = {tag}>{tag}</Label>))}
             </Table.Cell>
             <Table.Cell>{issue.created_by_name}</Table.Cell>
             <Table.Cell>{(new Date(issue.created_on)).toDateString()}</Table.Cell>
-            <Table.Cell>{issue.assigned_to_name.map(assigned => (<span key={assigned.id}>{assigned.name}  </span>))}</Table.Cell>
+            <Table.Cell>{issue.assigned_to_name.map(assigned => (<span key={assigned.id}>{assigned.name+', '}  </span>))}</Table.Cell>
             <Table.Cell>{issue.status === 'O'? 'Open' : 'Close'}</Table.Cell>
         </Table.Row>
     ))
