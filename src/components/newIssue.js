@@ -243,7 +243,13 @@ class NewIssue extends Component {
                 </Form.Field>
                 <Form.Field>
                     <label>Upload images:</label>
-                    <input name = 'media'type = 'file' multiple onChange = {this.handleImageChange} className='input_small'/>
+                    <input 
+                        name = 'media'
+                        type = 'file' 
+                        multiple 
+                        accept="image/*"
+                        onChange = {this.handleImageChange} 
+                        className='input_small'/>
                 </Form.Field>
                 <Form.Dropdown
                     name = 'tag'

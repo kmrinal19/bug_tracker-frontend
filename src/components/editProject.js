@@ -280,7 +280,8 @@ class EditProject extends Component {
                     <input 
                         name = 'media'
                         type = 'file' 
-                        multiple 
+                        multiple
+                        accept="image/*" 
                         onChange = {this.handleImageChange}
                         className = 'input_small'
                         />

@@ -157,6 +157,7 @@ class NewProject extends Component {
                         name = 'media'
                         type = 'file' 
                         multiple 
+                        accept="image/*"
                         onChange = {this.handleImageChange}
                         className = 'input_small'
                         />
