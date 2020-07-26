@@ -13,6 +13,10 @@
     justify-self: end;
     align-self: center;
 }
+.clear{
+    clear: both;
+    min-height: 70px;
+}
 @media only screen and (max-width: 356px){
     .footer_container{
         grid-template-columns: 1fr
@@ -22,5 +26,9 @@
     }
     .footer_right{
         justify-self: center;
+    }
+    .clear{
+        clear: both;
+        min-height: 90px;
     }
 }
