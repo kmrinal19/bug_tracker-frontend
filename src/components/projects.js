@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
-import { Table, Breadcrumb, Container, Menu } from 'semantic-ui-react'
+import { Table, Breadcrumb, Container, Menu, Loader } from 'semantic-ui-react'
 import { withRouter } from "react-router"
 
 import authenticate from '../authenticate'
@@ -45,20 +45,23 @@ class ProjectTable extends Component{
                 <Table.Cell>{(new Date(project.created_on)).toDateString()}</Table.Cell>
             </Table.Row>
         ))
+        let isLoading = this.state.isLoading
         return(
             <Fragment>
-                <Table padded>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell className = 'table_header'>Project</Table.HeaderCell>
-                            <Table.HeaderCell className = 'table_header'>Created by</Table.HeaderCell>
-                            <Table.HeaderCell className = 'table_header'>Created on</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {table}
-                    </Table.Body>
-                </Table>  
+                {isLoading? <Loader active size='large'>Loading</Loader> :
+                    <Table padded>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell className = 'table_header'>Project</Table.HeaderCell>
+                                <Table.HeaderCell className = 'table_header'>Created by</Table.HeaderCell>
+                                <Table.HeaderCell className = 'table_header'>Created on</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {table}
+                        </Table.Body>
+                    </Table>
+                }  
             </Fragment>
   
         )
