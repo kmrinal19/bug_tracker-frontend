@@ -6,15 +6,23 @@ import authenticate from '../authenticate'
 import { Container, Header, Divider, List } from 'semantic-ui-react'
 import '../css/myPage.css'
 import { Link } from 'react-router-dom'
+import {GET_USER_URL} from '../Const'
+import axios from 'axios'
 
 class MyPage extends Component {
-    
+ 
     componentDidMount(){
         authenticate()
     }
 
     render() {
-        const user = this.props.user.user
+        var user = this.props.user.user
+        if(user){
+            axios.get(GET_USER_URL+user.id)
+            .then(response =>{
+                user = response.data
+            })
+        }
         return (
             <Container>
                 <Container textAlign = 'center' className = 'myPageHead'>
