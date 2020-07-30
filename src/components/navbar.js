@@ -99,6 +99,8 @@ class Navbar extends Component {
                                 className = 'inverted_link'
                             />
                             <Menu.Item
+                                as = 'a'
+                                href = 'https://github.com/kmrinal19/bug_tracker-frontend'
                                 name = 'about'
                                 className = 'inverted_link'
                             />
