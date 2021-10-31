@@ -71,11 +71,6 @@ class UserInfo extends Component {
                             </Menu.Item>
                         </Menu>
                         <Container textAlign = 'center' className = 'myPageHead'>
-                            {/* <Image 
-                                src = {require('../images/user.svg')} 
-                                size = 'small'
-                                centered
-                            /> */}
                             <Avatar color={Avatar.getRandomColor('sitebase', ['red', 'green', 'blue'])} size = "120" round name = {user? user.name :""}/>
                             <Header as = 'h3'>{user.name?user.name : ''}</Header>
                         </Container>
